@@ -23,8 +23,8 @@ export class StoresService {
     });
   }
 
-  findAll() {
-    return `This action returns all stores`;
+  async findAll() {
+    return await this.prisma.store.findMany();
   }
 
   findOne(id: number) {

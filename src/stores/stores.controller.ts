@@ -21,8 +21,15 @@ export class StoresController {
   }
 
   @Get()
-  findAll() {
-    return this.storesService.findAll();
+  async findAll() {
+    const stores = await this.storesService.findAll();
+
+    return {
+      data: stores,
+      meta: {
+        totalItems: stores.length,
+      },
+    };
   }
 
   @Get(':id')
