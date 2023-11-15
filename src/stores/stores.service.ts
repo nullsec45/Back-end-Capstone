@@ -27,8 +27,16 @@ export class StoresService {
     return await this.prisma.store.findMany();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} store`;
+  async findOne(id: string) {
+    return await this.prisma.store.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        products: true,
+        storeAddress: true,
+      },
+    });
   }
 
   update(id: number, updateStoreDto: UpdateStoreDto) {
