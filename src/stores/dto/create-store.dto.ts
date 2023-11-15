@@ -1,12 +1,6 @@
-import { Exclude } from 'class-transformer';
-import { IsNotEmpty, MaxLength, IsUUID } from 'class-validator';
+import { IsNotEmpty, MaxLength } from 'class-validator';
 
 export class CreateStoreDto {
-  @Exclude()
-  id: string;
-
-  @IsNotEmpty()
-  @IsUUID()
   userId: string;
 
   @IsNotEmpty()

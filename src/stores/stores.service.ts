@@ -27,7 +27,7 @@ export class StoresService {
     return await this.prisma.store.findMany();
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} store`;
   }
 
