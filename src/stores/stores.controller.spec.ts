@@ -17,4 +17,10 @@ describe('StoresController', () => {
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+
+  // describe('findAll', () => {
+  //   it('should return an array of stores in the data property', async () => {
+  //     const result
+  //   })
+  // })
 });

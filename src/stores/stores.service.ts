@@ -39,7 +39,7 @@ export class StoresService {
     });
   }
 
-  update(id: number, updateStoreDto: UpdateStoreDto) {
+  update(id: string, updateStoreDto: UpdateStoreDto) {
     return `This action updates a #${id} store`;
   }
 

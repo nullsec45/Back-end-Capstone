@@ -8,11 +8,14 @@ import {
   Delete,
   Req,
   NotFoundException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
-import { AuthenticatedRequest } from 'express';
+import { AuthenticatedRequest } from 'typings';
+import { HttpCustomException } from 'customExceptions/HttpCustomException';
 
 @Controller('stores')
 export class StoresController {
@@ -42,7 +45,8 @@ export class StoresController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const store = await this.storesService.findOne(id);
-    if (!store) throw new NotFoundException();
+    if (!store)
+      throw new HttpCustomException('Store not found', HttpStatus.NOT_FOUND);
 
     return {
       data: store,
@@ -51,7 +55,7 @@ export class StoresController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-    return this.storesService.update(+id, updateStoreDto);
+    return this.storesService.update(id, updateStoreDto);
   }
 
   @Delete(':id')
