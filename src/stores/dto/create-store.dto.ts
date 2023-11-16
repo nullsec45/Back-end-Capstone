@@ -1,4 +1,4 @@
-import { IsNotEmpty, MaxLength } from 'class-validator';
+import { IsNotEmpty, MaxLength, IsBoolean } from 'class-validator';
 
 export class CreateStoreDto {
   userId: string;
@@ -12,4 +12,7 @@ export class CreateStoreDto {
 
   @IsNotEmpty()
   profilePicture: string;
+
+  @IsBoolean()
+  status: boolean;
 }

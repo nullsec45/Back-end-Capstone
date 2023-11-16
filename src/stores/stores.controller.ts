@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   Req,
-  NotFoundException,
-  HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
@@ -54,8 +52,21 @@ export class StoresController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStoreDto: UpdateStoreDto) {
-    return this.storesService.update(id, updateStoreDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateStoreDto: UpdateStoreDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    // const userId = req.user.id; UNTUK AUTHORIZATION NANTI
+    const updatedStore = await this.storesService.update(id, updateStoreDto);
+
+    if (!updatedStore)
+      throw new HttpCustomException('Store not found', HttpStatus.NOT_FOUND);
+
+    return {
+      data: updatedStore,
+      message: 'Store updated successfully',
+    };
   }
 
   @Delete(':id')
