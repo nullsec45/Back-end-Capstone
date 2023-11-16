@@ -60,7 +60,16 @@ export class StoresService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} store`;
+  async remove(id: string) {
+    try {
+      return await this.prisma.store.delete({
+        where: {
+          id,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }

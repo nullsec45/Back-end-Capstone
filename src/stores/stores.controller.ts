@@ -15,6 +15,7 @@ import { UpdateStoreDto } from './dto/update-store.dto';
 import { AuthenticatedRequest } from 'typings';
 import { HttpCustomException } from 'customExceptions/HttpCustomException';
 
+// BELUM MENERAPKAN AUTHORIZATION untuk create, update, delete, dll
 @Controller('stores')
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
@@ -70,7 +71,15 @@ export class StoresController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.storesService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const deletedStore = await this.storesService.remove(id);
+
+    if (!deletedStore)
+      throw new HttpCustomException('Store not found', HttpStatus.NOT_FOUND);
+
+    return {
+      data: deletedStore,
+      message: 'Store deleted successfully',
+    };
   }
 }
