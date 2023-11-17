@@ -40,36 +40,26 @@ export class StoresService {
   }
 
   async update(id: string, updateStoreDto: UpdateStoreDto) {
-    try {
-      const { name, description, profilePicture, status } = updateStoreDto;
+    const { name, description, profilePicture, status } = updateStoreDto;
 
-      return await this.prisma.store.update({
-        where: {
-          id,
-        },
-        data: {
-          name,
-          description,
-          profilePicture,
-          status,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+    return await this.prisma.store.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        description,
+        profilePicture,
+        status,
+      },
+    });
   }
 
   async remove(id: string) {
-    try {
-      return await this.prisma.store.delete({
-        where: {
-          id,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+    return await this.prisma.store.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

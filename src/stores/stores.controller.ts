@@ -7,13 +7,12 @@ import {
   Param,
   Delete,
   Req,
-  HttpStatus,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { AuthenticatedRequest } from 'typings';
-import { HttpCustomException } from 'customExceptions/HttpCustomException';
+import { NotFoundCustomException } from 'customExceptions/NotFoundCustomException';
 
 // BELUM MENERAPKAN AUTHORIZATION untuk create, update, delete, dll
 @Controller('stores')
@@ -21,12 +20,19 @@ export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
   @Post()
-  create(
+  async create(
     @Body() createStoreDto: CreateStoreDto,
     @Req() req: AuthenticatedRequest,
   ) {
     const userId = req.user.id;
-    return this.storesService.create({ ...createStoreDto, userId });
+    const createdStore = await this.storesService.create({
+      ...createStoreDto,
+      userId,
+    });
+
+    return {
+      data: createdStore,
+    };
   }
 
   @Get()
@@ -44,8 +50,7 @@ export class StoresController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const store = await this.storesService.findOne(id);
-    if (!store)
-      throw new HttpCustomException('Store not found', HttpStatus.NOT_FOUND);
+    if (!store) throw new NotFoundCustomException('Store not found');
 
     return {
       data: store,
@@ -61,9 +66,6 @@ export class StoresController {
     // const userId = req.user.id; UNTUK AUTHORIZATION NANTI
     const updatedStore = await this.storesService.update(id, updateStoreDto);
 
-    if (!updatedStore)
-      throw new HttpCustomException('Store not found', HttpStatus.NOT_FOUND);
-
     return {
       data: updatedStore,
       message: 'Store updated successfully',
@@ -73,9 +75,6 @@ export class StoresController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const deletedStore = await this.storesService.remove(id);
-
-    if (!deletedStore)
-      throw new HttpCustomException('Store not found', HttpStatus.NOT_FOUND);
 
     return {
       data: deletedStore,
