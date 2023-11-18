@@ -156,7 +156,7 @@ model Order {
   userAddressId   String
   products        OrderDetail[]
   transaction     Transaction?
-  totalAmount    Decimal
+  totalAmount     Decimal
   status          OrderStatus
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -200,6 +200,7 @@ model ProductInCart {
   id              String    @id @default(uuid())
   product         Product   @relation(fields: [productId], references: [id])
   productId       String
+  quantity        Int
   cart            Cart      @relation(fields: [cartId], references: [id])
   cartId          String
   
@@ -221,6 +222,6 @@ enum OrderStatus {
 
 enum TransactionStatus {
   PENDING
-  SUCCESS
-  FAILED
+  VERIFIED
+  REJECTED
 }
