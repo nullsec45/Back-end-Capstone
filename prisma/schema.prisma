@@ -179,6 +179,7 @@ model Transaction {
   order           Order     @relation(fields: [orderId], references: [id])
   orderId         String    @unique
   paymentMethod   String
+  paymentProof    String
   status          TransactionStatus
   transactionAmount Decimal
   createdAt       DateTime  @default(now())
