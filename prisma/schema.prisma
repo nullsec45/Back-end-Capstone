@@ -22,6 +22,8 @@ model User {
   password        String
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@map("users")
 }
 
 model Profile {
@@ -36,6 +38,8 @@ model Profile {
   phoneNumber     String?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  @@map("profiles")
 }
 
 model UserAddress {
@@ -52,6 +56,8 @@ model UserAddress {
   longitude       String
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  @@map("user_addresses")
 }
 
 model Store {
@@ -67,6 +73,8 @@ model Store {
   verfied         Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  @@map("stores")
 }
 
 
@@ -83,6 +91,8 @@ model StoreAddress {
   longitude       String
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  @@map("store_addresses")
 }
 
 model Product {
@@ -102,6 +112,8 @@ model Product {
   stock           Int
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  @@map("products")
 }
 
 model Category {
@@ -109,6 +121,8 @@ model Category {
   products        Product[]
   name            String
   description     String?   @db.Text
+  
+  @@map("categories")
 }
 
 model Review {
@@ -121,6 +135,8 @@ model Review {
   comment         String    @db.Text
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  @@map("reviews")
 }
 
 model ProductPicture {
@@ -128,6 +144,8 @@ model ProductPicture {
   url             String
   product         Product   @relation(fields: [productId], references: [id])
   productId       String
+  
+  @@map("product_pictures")
 }
 
 model Order {
@@ -142,6 +160,8 @@ model Order {
   status          OrderStatus
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  @@map("orders")
 }
 
 model OrderDetail {
@@ -150,6 +170,8 @@ model OrderDetail {
   orderId         String    
   product         Product   @relation(fields: [productId], references: [id])
   productId       String
+  
+  @@map("order_details")
 }
 
 model Transaction {
@@ -161,6 +183,8 @@ model Transaction {
   transactionAmount Decimal
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+  
+  @@map("transactions")
 }
 
 model Cart {
@@ -168,6 +192,8 @@ model Cart {
   user            User      @relation(fields: [userId], references: [id])
   userId          String    @unique
   products        ProductInCart[]
+  
+  @@map("carts")
 }
 
 model ProductInCart {
@@ -176,6 +202,8 @@ model ProductInCart {
   productId       String
   cart            Cart      @relation(fields: [cartId], references: [id])
   cartId          String
+  
+  @@map("product_in_cart")
 }
 
 enum Gender {
