@@ -15,18 +15,18 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
       case 'P2002':
         response.status(HttpStatus.CONFLICT).json({
           error: {
-            code: HttpStatus.CONFLICT,
             message,
           },
+          statusCode: HttpStatus.CONFLICT,
           success: false,
         });
         break;
       case 'P2025':
         response.status(HttpStatus.NOT_FOUND).json({
           error: {
-            code: HttpStatus.NOT_FOUND,
             message,
           },
+          statusCode: HttpStatus.NOT_FOUND,
           success: false,
         });
       default:
