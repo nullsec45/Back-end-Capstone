@@ -34,8 +34,16 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  async findAll() {
+    const products = await this.productsService.findAll();
+
+    return {
+      data: products,
+      statusCode: HttpStatus.OK,
+      meta: {
+        totalItems: products.length,
+      },
+    };
   }
 
   @Get(':id')

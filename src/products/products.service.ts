@@ -15,8 +15,12 @@ export class ProductsService {
     });
   }
 
-  findAll() {
-    return `This action returns all products`;
+  async findAll() {
+    return await this.prisma.product.findMany({
+      include: {
+        productPictures: true,
+      },
+    });
   }
 
   findOne(id: number) {
