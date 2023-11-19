@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
 type AuthenticatedRequest = Request & {
-  user: {
+  user?: {
     id: string;
   };
 };
