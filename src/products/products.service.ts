@@ -8,9 +8,19 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto) {
+    const { productPictures, ...product } = createProductDto;
+    const transformedProductPictures = productPictures.map((url) => ({
+      url,
+    }));
+
     return await this.prisma.product.create({
       data: {
-        ...createProductDto,
+        ...product,
+        productPictures: {
+          createMany: {
+            data: transformedProductPictures,
+          },
+        },
       },
     });
   }
