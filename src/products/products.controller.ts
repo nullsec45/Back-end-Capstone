@@ -47,8 +47,13 @@ export class ProductsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const product = await this.productsService.findOne(id);
+
+    return {
+      data: product,
+      statusCode: HttpStatus.OK,
+    };
   }
 
   @Patch(':id')

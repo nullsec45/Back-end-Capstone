@@ -33,8 +33,18 @@ export class ProductsService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    return await this.prisma.product.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        category: true,
+        store: true,
+        reviews: true,
+        productPictures: true,
+      },
+    });
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
