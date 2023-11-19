@@ -107,7 +107,7 @@ model Product {
   carts           ProductInCart[]
   name            String    
   description     String    @db.Text
-  price           Decimal
+  price           Decimal   @db.Decimal(20, 2)
   maximumRental   Int
   stock           Int
   createdAt       DateTime  @default(now())
@@ -149,17 +149,17 @@ model ProductPicture {
 }
 
 model Order {
-  id              String    @id @default(uuid())
-  user            User      @relation(fields: [userId], references: [id])
+  id              String        @id @default(uuid())
+  user            User          @relation(fields: [userId], references: [id])
   userId          String  
-  userAddress     UserAddress @relation(fields: [userAddressId], references: [id])
+  userAddress     UserAddress   @relation(fields: [userAddressId], references: [id])
   userAddressId   String
   products        OrderDetail[]
   transaction     Transaction?
-  totalAmount     Decimal
+  totalAmount     Decimal       @db.Decimal(20, 2)
   status          OrderStatus
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
   
   @@map("orders")
 }
@@ -181,7 +181,7 @@ model Transaction {
   paymentMethod   String
   paymentProof    String
   status          TransactionStatus
-  transactionAmount Decimal
+  transactionAmount Decimal @db.Decimal(20, 2)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
