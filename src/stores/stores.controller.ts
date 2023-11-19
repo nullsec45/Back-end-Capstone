@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  HttpStatus,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
@@ -24,7 +25,7 @@ export class StoresController {
     @Body() createStoreDto: CreateStoreDto,
     @Req() req: AuthenticatedRequest,
   ) {
-    const userId = req.user.id;
+    const userId = req.user?.id;
     const createdStore = await this.storesService.create({
       ...createStoreDto,
       userId,
@@ -32,6 +33,8 @@ export class StoresController {
 
     return {
       data: createdStore,
+      statusCode: HttpStatus.CREATED,
+      message: 'store successfully created',
     };
   }
 
@@ -41,6 +44,7 @@ export class StoresController {
 
     return {
       data: stores,
+      statusCode: HttpStatus.OK,
       meta: {
         totalItems: stores.length,
       },
@@ -54,6 +58,7 @@ export class StoresController {
 
     return {
       data: store,
+      statusCode: HttpStatus.OK,
     };
   }
 
@@ -63,22 +68,23 @@ export class StoresController {
     @Body() updateStoreDto: UpdateStoreDto,
     @Req() req: AuthenticatedRequest,
   ) {
-    // const userId = req.user.id; UNTUK AUTHORIZATION NANTI
+    // const userId = req.user?.id; // UNTUK AUTHORIZATION NANTI
     const updatedStore = await this.storesService.update(id, updateStoreDto);
 
     return {
       data: updatedStore,
-      message: 'Store updated successfully',
+      statusCode: HttpStatus.OK,
+      message: 'store successfully updated',
     };
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    const deletedStore = await this.storesService.remove(id);
+    await this.storesService.remove(id);
 
     return {
-      data: deletedStore,
-      message: 'Store deleted successfully',
+      statusCode: HttpStatus.OK,
+      message: 'store successfully deleted',
     };
   }
 }
