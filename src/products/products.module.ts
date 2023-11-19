@@ -2,7 +2,7 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
 import { PrismaService } from '../prisma.service';
-import { MockJwtMiddleware } from '../stores/mockJwt.middleware';
+import { MockJwtMiddleware } from '../mockJwt.middleware';
 
 @Module({
   controllers: [ProductsController],

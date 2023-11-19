@@ -47,8 +47,24 @@ export class ProductsService {
     });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const { productPictures, ...product } = updateProductDto;
+    const transformedProductPictures = productPictures.map((url) => ({
+      url,
+    }));
+
+    return await this.prisma.product.update({
+      where: { id },
+      data: {
+        ...product,
+        productPictures: {
+          deleteMany: {}, // hapus dulu semua gambar yang terkait dengan id product saat ini
+          createMany: {
+            data: transformedProductPictures,
+          },
+        },
+      },
+    });
   }
 
   remove(id: number) {

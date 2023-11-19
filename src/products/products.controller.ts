@@ -19,7 +19,7 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  // JWT AUTHGUARD
+  // JWT AUTHGUARD "BELUM DIIMPLEMENTASI"
   async create(
     @Body() createProductDto: CreateProductDto,
     @Req() req: AuthenticatedRequest,
@@ -30,6 +30,7 @@ export class ProductsController {
     return {
       data: createdProduct,
       statusCode: HttpStatus.CREATED,
+      message: 'product sucessfully created',
     };
   }
 
@@ -57,8 +58,20 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    const updatedProduct = await this.productsService.update(
+      id,
+      updateProductDto,
+    );
+
+    return {
+      data: updatedProduct,
+      statusCode: HttpStatus.OK,
+      message: 'product sucessfully updated',
+    };
   }
 
   @Delete(':id')
