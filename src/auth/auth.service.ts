@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { AuthDto } from './dto/auth.dto';
 import { UsersService } from 'src/user/users.service';
 import { compare } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-
+import { User } from '../../typings';
 @Injectable()
 export class AuthService {
   constructor(
@@ -11,22 +10,29 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(authDto: AuthDto) {
-    const user = await this.usersService.findByEmail(authDto.email);
+  async validateUser(email: string, password: string): Promise<User> {
+    const user = await this.usersService.findByEmail(email);
 
-    if (user && (await compare(authDto.password, user.password))) {
-      const { password, ...result } = user;
-      const payload = { sub: result.id, username: result.email };
-      return {
-        data: {
-          access_token: await this.jwtService.signAsync(payload, {
-            secret: 'FajarGanteng77_',
-            expiresIn: '1H',
-          }),
-        },
-        statusCode: 200,
-        message: 'Login Successfully',
-      };
+    if (user) {
+      const isPasswordValid = await compare(password, user.password);
+
+      if (isPasswordValid) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, createdAt, updatedAt, ...result } = user;
+        return result;
+      }
     }
+
+    return null;
+  }
+
+  async login(user: User) {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      username: user.email,
+    };
+
+    return this.jwtService.sign(payload);
   }
 }
