@@ -3,21 +3,21 @@ import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   getHello(): string {
     return 'Hello World!';
   }
 
-  async create(): Promise<any> {
-    const user = await this.prisma.user.create({
-      data: {
-        email: 'rizki@gmail',
-        password: 'rizki',
-        username: 'rizki',
-      },
-    });
+  // async create(): Promise<any> {
+  //   const user = await this.prisma.user.create({
+  //     data: {
+  //       email: 'rizki@gmail',
+  //       password: 'rizki',
+  //       username: 'rizki',
+  //     },
+  //   });
 
-    return user;
-  }
+  //   return user;
+  // }
 }

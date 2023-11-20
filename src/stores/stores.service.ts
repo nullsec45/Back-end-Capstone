@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { PrismaService } from 'src/prisma.service';
+import { ConflictCustomException } from '../../customExceptions/ConflictCustomException';
 
 @Injectable()
 export class StoresService {
@@ -9,6 +10,10 @@ export class StoresService {
 
   async create(createStoreDto: CreateStoreDto) {
     const { name, description, profilePicture, userId } = createStoreDto;
+
+    const isStoreNameExist = await this.findByName(name);
+    if (isStoreNameExist)
+      throw new ConflictCustomException('store name duplicated');
 
     return await this.prisma.store.create({
       data: {
@@ -20,6 +25,12 @@ export class StoresService {
       include: {
         user: true,
       },
+    });
+  }
+
+  async findByName(storeName: string) {
+    return await this.prisma.store.findUnique({
+      where: { name: storeName },
     });
   }
 

@@ -4,9 +4,9 @@ export class NotFoundCustomException extends NotFoundException {
   constructor(message: string) {
     super({
       error: {
-        code: HttpStatus.NOT_FOUND,
         message,
       },
+      statusCode: HttpStatus.NOT_FOUND,
       success: false,
     });
   }
