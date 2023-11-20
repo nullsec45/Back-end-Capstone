@@ -8,23 +8,21 @@ import {
   Delete,
   Req,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { AuthenticatedRequest } from 'typings';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  // JWT AUTHGUARD "BELUM DIIMPLEMENTASI"
-  async create(
-    @Body() createProductDto: CreateProductDto,
-    @Req() req: AuthenticatedRequest,
-  ) {
-    const userId = req.user?.id;
+  async create(@Body() createProductDto: CreateProductDto) {
     const createdProduct = await this.productsService.create(createProductDto);
 
     return {
@@ -57,6 +55,7 @@ export class ProductsController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -74,6 +73,7 @@ export class ProductsController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     await this.productsService.remove(id);
