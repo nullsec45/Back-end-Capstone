@@ -7,9 +7,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UsersService } from '../user/users.service';
-import { AuthenticatedRequest } from '../../typings';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 
 @Controller('auth')
@@ -21,7 +20,7 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req: AuthenticatedRequest) {
+  async login(@Req() req: any) {
     const access_token = await this.authService.login(req.user);
 
     return {

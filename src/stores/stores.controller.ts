@@ -8,24 +8,28 @@ import {
   Delete,
   Req,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { StoresService } from './stores.service';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { AuthenticatedRequest } from 'typings';
 import { NotFoundCustomException } from 'customExceptions/NotFoundCustomException';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
 // BELUM MENERAPKAN AUTHORIZATION untuk create, update, delete, dll
 @Controller('stores')
 export class StoresController {
   constructor(private readonly storesService: StoresService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Body() createStoreDto: CreateStoreDto,
     @Req() req: AuthenticatedRequest,
   ) {
-    const userId = req.user?.id;
+    const userId = req.user.sub;
+
     const createdStore = await this.storesService.create({
       ...createStoreDto,
       userId,
@@ -62,13 +66,14 @@ export class StoresController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateStoreDto: UpdateStoreDto,
     @Req() req: AuthenticatedRequest,
   ) {
-    // const userId = req.user?.id; // UNTUK AUTHORIZATION NANTI
+    const userId = req.user.sub;
     const updatedStore = await this.storesService.update(id, updateStoreDto);
 
     return {
@@ -78,8 +83,10 @@ export class StoresController {
     };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
+    const userId = req.user.sub;
     await this.storesService.remove(id);
 
     return {
