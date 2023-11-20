@@ -11,8 +11,11 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const isEmailExist = await this.findByEmail(createUserDto.email);
+    const isUsernameExist = await this.findByUsername(createUserDto.username);
 
     if (isEmailExist) throw new ConflictCustomException('email duplicated');
+    if (isUsernameExist)
+      throw new ConflictCustomException('username duplicated');
 
     const newUser = await this.prisma.user.create({
       data: {
@@ -52,13 +55,19 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: {
         email,
       },
     });
+  }
 
-    return user;
+  async findByUsername(username: string) {
+    return await this.prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
