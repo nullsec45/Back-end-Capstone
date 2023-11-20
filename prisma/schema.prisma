@@ -157,7 +157,7 @@ model Order {
   products        OrderDetail[]
   transaction     Transaction?
   totalAmount     Decimal       @db.Decimal(20, 2)
-  status          OrderStatus
+  status          OrderStatus 
   shipping        ShippingMethod
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -171,6 +171,9 @@ model OrderDetail {
   orderId         String    
   product         Product   @relation(fields: [productId], references: [id])
   productId       String
+  quantity        Int
+  price           Decimal   @db.Decimal(20, 2)
+  subTotal        Decimal   @db.Decimal(20, 2)
   
   @@map("order_details")
 }
