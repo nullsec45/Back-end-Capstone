@@ -21,11 +21,11 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Req() req: any) {
-    const access_token = await this.authService.login(req.user);
+    const accessToken = await this.authService.login(req.user);
 
     return {
       data: {
-        access_token,
+        accessToken,
       },
       statusCode: HttpStatus.OK,
       message: 'login successfully',
