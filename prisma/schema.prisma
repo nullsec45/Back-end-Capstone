@@ -16,6 +16,7 @@ model User {
   store           Store?
   reviews         Review[]
   orders          Order[]
+  userAddress     UserAddress[]
   cart            Cart?
   email           String    @unique
   username        String    @unique
@@ -30,7 +31,6 @@ model Profile {
   id              String    @id @default(uuid())
   user            User      @relation(fields: [userId], references: [id])
   userId          String    @unique // 1-1 relation
-  userAddress     UserAddress[]
   fullname        String?
   profilePicture  String?
   gender          Gender
@@ -44,8 +44,8 @@ model Profile {
 
 model UserAddress {
   id              String    @id @default(uuid())
-  profile         Profile   @relation(fields: [profileId], references: [id])
-  profileId       String    // 1-n relation
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    // 1-n relation
   orders          Order[]
   province        String
   city            String
