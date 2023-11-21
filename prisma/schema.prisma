@@ -107,7 +107,7 @@ model Product {
   carts           ProductInCart[]
   name            String    
   description     String    @db.Text
-  price           Decimal   @db.Decimal(20, 2)
+  price           Float     @db.Double
   maximumRental   Int
   stock           Int
   createdAt       DateTime  @default(now())
@@ -156,7 +156,7 @@ model Order {
   userAddressId   String
   products        OrderDetail[]
   transaction     Transaction?
-  totalAmount     Decimal       @db.Decimal(20, 2)
+  totalAmount     Float         @db.Double
   status          OrderStatus 
   shipping        ShippingMethod
   createdAt       DateTime      @default(now())
@@ -172,8 +172,8 @@ model OrderDetail {
   product         Product   @relation(fields: [productId], references: [id])
   productId       String
   quantity        Int
-  price           Decimal   @db.Decimal(20, 2)
-  subTotal        Decimal   @db.Decimal(20, 2)
+  price           Float     @db.Double
+  subTotal        Float     @db.Double
   rentPeriod      Int
   
   @@map("order_details")
@@ -186,7 +186,7 @@ model Transaction {
   paymentMethod   String
   paymentProof    String
   status          TransactionStatus
-  transactionAmount Decimal @db.Decimal(20, 2)
+  transactionAmount Float   @db.Double
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
