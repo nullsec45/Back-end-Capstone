@@ -9,6 +9,14 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+enum ShippingMethod {
+  PICKUP = 'PICKUP',
+  GOSEND = 'GOSEND',
+}
+
+enum PaymentMethod {
+  TRANSFER = 'TRANSFER',
+}
 class ProductDto {
   @IsNotEmpty()
   @IsString()
@@ -25,13 +33,8 @@ class ProductDto {
 
 class TransactionDto {
   @IsNotEmpty()
-  @IsEnum(['TRANSFER'])
-  paymentMethod: string;
-}
-
-enum ShippingMethod {
-  PICKUP = 'PICKUP',
-  GOSEND = 'GOSEND',
+  @IsEnum(PaymentMethod)
+  paymentMethod: PaymentMethod;
 }
 
 export class CreateOrderDto {
