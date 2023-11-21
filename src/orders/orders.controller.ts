@@ -55,8 +55,17 @@ export class OrdersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+  async findOne(
+    @Param('id') orderId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+    const order = await this.ordersService.findOne(orderId, userId);
+
+    return {
+      data: order,
+      statusCode: HttpStatus.OK,
+    };
   }
 
   @Patch(':id')

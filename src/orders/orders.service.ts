@@ -99,8 +99,56 @@ export class OrdersService {
     return mappedOrders;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(orderId: string, userId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: {
+        id: orderId,
+        userId,
+      },
+      include: {
+        products: true,
+        transaction: true,
+        userAddress: true,
+      },
+    });
+
+    type OrderResponse = typeof order;
+
+    const mapOrderResponse = (order: OrderResponse) => {
+      const {
+        userId,
+        userAddressId,
+        userAddress: {
+          id: idAddress,
+          userId: userIdAddress,
+          createdAt,
+          updatedAt,
+          ...restUserAddress
+        },
+        transaction: { id: idTransaction, orderId, ...restTransaction },
+        ...rest
+      } = order;
+
+      const mappedProducts = order.products.map((product) => {
+        const { id, orderId, productId, ...rest } = product;
+
+        return {
+          id: productId,
+          ...rest,
+        };
+      });
+
+      return {
+        ...rest,
+        products: mappedProducts,
+        userAddress: restUserAddress,
+        transaction: restTransaction,
+      };
+    };
+
+    const mappedOrder = mapOrderResponse(order);
+
+    return mappedOrder;
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {
