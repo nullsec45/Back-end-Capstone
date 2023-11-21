@@ -16,6 +16,7 @@ model User {
   store           Store?
   reviews         Review[]
   orders          Order[]
+  userAddress     UserAddress[]
   cart            Cart?
   email           String    @unique
   username        String    @unique
@@ -30,7 +31,6 @@ model Profile {
   id              String    @id @default(uuid())
   user            User      @relation(fields: [userId], references: [id])
   userId          String    @unique // 1-1 relation
-  userAddress     UserAddress[]
   fullname        String?
   profilePicture  String?
   gender          Gender
@@ -44,8 +44,8 @@ model Profile {
 
 model UserAddress {
   id              String    @id @default(uuid())
-  profile         Profile   @relation(fields: [profileId], references: [id])
-  profileId       String    // 1-n relation
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    // 1-n relation
   orders          Order[]
   province        String
   city            String
@@ -107,7 +107,7 @@ model Product {
   carts           ProductInCart[]
   name            String    
   description     String    @db.Text
-  price           Decimal   @db.Decimal(20, 2)
+  price           Float     @db.Double
   maximumRental   Int
   stock           Int
   createdAt       DateTime  @default(now())
@@ -156,8 +156,8 @@ model Order {
   userAddressId   String
   products        OrderDetail[]
   transaction     Transaction?
-  totalAmount     Decimal       @db.Decimal(20, 2)
-  status          OrderStatus
+  totalAmount     Float         @db.Double
+  status          OrderStatus 
   shipping        ShippingMethod
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
@@ -171,6 +171,10 @@ model OrderDetail {
   orderId         String    
   product         Product   @relation(fields: [productId], references: [id])
   productId       String
+  quantity        Int
+  price           Float     @db.Double
+  subTotal        Float     @db.Double
+  rentPeriod      Int
   
   @@map("order_details")
 }
@@ -179,10 +183,10 @@ model Transaction {
   id              String    @id @default(uuid())
   order           Order     @relation(fields: [orderId], references: [id])
   orderId         String    @unique
-  paymentMethod   String
-  paymentProof    String
+  paymentMethod   PaymentMethod
+  paymentProof    String?
   status          TransactionStatus
-  transactionAmount Decimal @db.Decimal(20, 2)
+  transactionAmount Float?   @db.Double
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
@@ -231,4 +235,8 @@ enum TransactionStatus {
 enum ShippingMethod {
   PICKUP
   GOSEND
+}
+
+enum PaymentMethod {
+  TRANSFER
 }

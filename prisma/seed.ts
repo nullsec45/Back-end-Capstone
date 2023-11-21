@@ -23,6 +23,15 @@ async function main() {
     },
   });
 
+  // const store = await prisma.store.upsert({
+  //   where: {id: 'aaaa789f-c681-4b36-9710-411bfbb6aaaa'},
+  //   update: {},
+  //   create: {
+  //     id: 'aaaa789f-c681-4b36-9710-411bfbb6aaaa',
+  //     na
+  //   }
+  // })
+
   console.log({ ahmad, electronic });
 }
 
