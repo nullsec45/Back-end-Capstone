@@ -228,7 +228,7 @@ enum OrderStatus {
 
 enum TransactionStatus {
   PENDING
-  VERIFIED
+  APPROVED
   REJECTED
 }
 
