@@ -183,10 +183,10 @@ model Transaction {
   id              String    @id @default(uuid())
   order           Order     @relation(fields: [orderId], references: [id])
   orderId         String    @unique
-  paymentMethod   String
-  paymentProof    String
+  paymentMethod   PaymentMethod
+  paymentProof    String?
   status          TransactionStatus
-  transactionAmount Float   @db.Double
+  transactionAmount Float?   @db.Double
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
@@ -235,4 +235,8 @@ enum TransactionStatus {
 enum ShippingMethod {
   PICKUP
   GOSEND
+}
+
+enum PaymentMethod {
+  TRANSFER
 }
