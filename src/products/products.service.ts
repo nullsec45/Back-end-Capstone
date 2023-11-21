@@ -47,6 +47,22 @@ export class ProductsService {
     });
   }
 
+  async findManyById(ids: string[]) {
+    return await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      select: {
+        id: true,
+        price: true,
+        stock: true,
+        maximumRental: true,
+      },
+    });
+  }
+
   async update(id: string, updateProductDto: UpdateProductDto) {
     const { productPictures, ...product } = updateProductDto;
     const transformedProductPictures = productPictures.map((url) => ({

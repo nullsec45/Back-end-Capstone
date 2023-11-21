@@ -16,6 +16,7 @@ import { OrdersModule } from './orders/orders.module';
     AuthModule,
     UsersModule,
     ProductsModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
