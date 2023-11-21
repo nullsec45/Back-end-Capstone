@@ -5,11 +5,13 @@ import {
   HttpStatus,
   Req,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { LocalAuthGuard } from './guard/local-auth.guard';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +31,16 @@ export class AuthController {
       },
       statusCode: HttpStatus.OK,
       message: 'login successfully',
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('verify-token')
+  async verifyToken(@Req() req: any) {
+    return {
+      data: req.user,
+      statusCode: HttpStatus.OK,
+      message: 'token valid',
     };
   }
 
