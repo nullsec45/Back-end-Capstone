@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../prisma.service';
 import { ProductsService } from '../products/products.service';
 import { calculateOrderPriceDetails } from './utils';
+import { Order } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
@@ -64,8 +66,37 @@ export class OrdersService {
     });
   }
 
-  findAll() {
-    return `This action returns all orders`;
+  async findAll(userId: string) {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        transaction: true,
+      },
+    });
+
+    type OrdersResponse = typeof orders;
+
+    const mapOrdersResponse = (orders: OrdersResponse) => {
+      return orders.map((order) => {
+        const {
+          userId,
+          userAddressId,
+          transaction: { id: idTransaction, orderId, ...restTransaction },
+          ...rest
+        } = order;
+
+        return {
+          ...rest,
+          transaction: restTransaction,
+        };
+      });
+    };
+
+    const mappedOrders = mapOrdersResponse(orders);
+
+    return mappedOrders;
   }
 
   findOne(id: number) {

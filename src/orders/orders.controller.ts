@@ -41,8 +41,17 @@ export class OrdersController {
   }
 
   @Get()
-  findAll() {
-    return this.ordersService.findAll();
+  async findAll(@Req() req: AuthenticatedRequest) {
+    const userId = req.user.sub;
+    const orders = await this.ordersService.findAll(userId);
+
+    return {
+      data: orders,
+      statusCode: HttpStatus.OK,
+      meta: {
+        totalItems: orders.length,
+      },
+    };
   }
 
   @Get(':id')
