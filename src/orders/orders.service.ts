@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../prisma.service';
 import { ProductsService } from '../products/products.service';
 import { calculateOrderPriceDetails } from './utils';
 import { Order } from '@prisma/client';
+import { BadRequestCustomException } from '../../customExceptions/BadRequestCustomException';
 
 @Injectable()
 export class OrdersService {
@@ -151,11 +152,36 @@ export class OrdersService {
     return mappedOrder;
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
-  }
+  async cancelOrderById(orderId: string, userId: string) {
+    const order = await this.findOne(orderId, userId);
 
-  remove(id: number) {
-    return `This action removes a #${id} order`;
+    switch (order.status) {
+      case 'CANCELLED':
+        throw new BadRequestCustomException('your order has been cancelled');
+      case 'DELIVERED':
+        throw new BadRequestCustomException(
+          'your order has been delivered. orders cannot be canceled',
+        );
+      case 'SHIPPED':
+        throw new BadRequestCustomException(
+          'your order has been shipped. orders cannot be canceled',
+        );
+      case 'PROCESSING':
+        throw new BadRequestCustomException(
+          'your order has been processed. orders cannot be canceled',
+        );
+    }
+
+    const updatedOrder = await this.prisma.order.update({
+      where: {
+        id: orderId,
+        userId,
+      },
+      data: {
+        status: 'CANCELLED',
+      },
+    });
+
+    return updatedOrder;
   }
 }

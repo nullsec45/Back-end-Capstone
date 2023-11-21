@@ -3,16 +3,14 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
   HttpStatus,
   Req,
+  HttpCode,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { AuthenticatedRequest } from '../../typings';
 
@@ -68,13 +66,19 @@ export class OrdersController {
     };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
-  }
+  @Post(':id/cancel-order')
+  @HttpCode(HttpStatus.OK)
+  async cancelOrder(
+    @Param('id') orderId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+    const order = await this.ordersService.cancelOrderById(orderId, userId);
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+    return {
+      data: order,
+      statusCode: HttpStatus.OK,
+      message: 'order successfully cancelled',
+    };
   }
 }
