@@ -1,15 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Req,
+  UseGuards,
+  HttpStatus,
+} from '@nestjs/common';
 import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { AuthenticatedRequest } from '../../typings';
 
+@UseGuards(JwtAuthGuard)
 @Controller('addresses')
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 
   @Post()
-  create(@Body() createAddressDto: CreateAddressDto) {
-    return this.addressesService.create(createAddressDto);
+  async create(
+    @Body() createAddressDto: CreateAddressDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+
+    const address = await this.addressesService.create(
+      createAddressDto,
+      userId,
+    );
+
+    return {
+      data: address,
+      statusCode: HttpStatus.CREATED,
+      message: 'address successfully created',
+    };
   }
 
   @Get()
