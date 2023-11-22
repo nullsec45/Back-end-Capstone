@@ -244,4 +244,5 @@ enum ShippingMethod {
 
 enum PaymentMethod {
   TRANSFER
+  COD
 }
