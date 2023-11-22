@@ -1,15 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { AuthenticatedRequest } from '../../typings';
 
+@UseGuards(JwtAuthGuard)
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
-  @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  @Post(':id/payment-proof')
+  @HttpCode(HttpStatus.OK)
+  async sendPaymentProof(
+    @Param('id') transactionId: string,
+    @Body() createTransactionDto: CreateTransactionDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+    const transaction = await this.transactionsService.sendPaymentProof(
+      transactionId,
+      createTransactionDto,
+      userId,
+    );
+
+    return {
+      data: transaction,
+      statusCode: HttpStatus.OK,
+      message:
+        'payment proof successfully sent. please wait for confirmation from the store owner',
+    };
   }
 
   @Get()
@@ -23,7 +55,10 @@ export class TransactionsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateTransactionDto: UpdateTransactionDto,
+  ) {
     return this.transactionsService.update(+id, updateTransactionDto);
   }
 
