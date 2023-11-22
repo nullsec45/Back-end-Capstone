@@ -1,4 +1,4 @@
-import { IsNotEmpty, MaxLength, IsBoolean } from 'class-validator';
+import { IsNotEmpty, MaxLength, IsBoolean, IsString } from 'class-validator';
 
 export class CreateStoreDto {
   userId: string;
@@ -8,9 +8,15 @@ export class CreateStoreDto {
   name: string;
 
   @IsNotEmpty()
+  @IsString()
+  accountNumber: string;
+
+  @IsNotEmpty()
+  @IsString()
   description: string;
 
   @IsNotEmpty()
+  @IsString()
   profilePicture: string;
 
   @IsBoolean()

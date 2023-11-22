@@ -43,6 +43,10 @@ export class CreateOrderDto {
   userAddressId: string;
 
   @IsNotEmpty()
+  @IsString()
+  storeId: string;
+
+  @IsNotEmpty()
   @IsEnum(ShippingMethod)
   shipping: ShippingMethod;
 
