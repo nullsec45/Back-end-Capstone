@@ -65,6 +65,7 @@ export class AddressesService {
     return await this.prisma.userAddress.update({
       where: {
         id: addressId,
+        userId,
       },
       data: {
         province,
