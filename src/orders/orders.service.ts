@@ -19,6 +19,7 @@ export class OrdersService {
       shipping,
       transaction,
       userAddressId,
+      storeId,
     } = createOrderDto;
 
     const productInfo = await this.productsService.findManyById(
@@ -50,6 +51,7 @@ export class OrdersService {
         userId,
         userAddressId,
         shipping,
+        storeId,
         status: 'PENDING',
         totalAmount: orderPriceDetails.totalAmount,
         products: {
