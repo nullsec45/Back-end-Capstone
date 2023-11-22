@@ -47,8 +47,35 @@ export class AddressesService {
     });
   }
 
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
+  async update(
+    addressId: string,
+    updateAddressDto: UpdateAddressDto,
+    userId: string,
+  ) {
+    const {
+      city,
+      district,
+      latitude,
+      longitude,
+      fullAddress,
+      postalCode,
+      province,
+    } = updateAddressDto;
+
+    return await this.prisma.userAddress.update({
+      where: {
+        id: addressId,
+      },
+      data: {
+        province,
+        city,
+        district,
+        fullAddress,
+        postalCode,
+        latitude,
+        longitude,
+      },
+    });
   }
 
   remove(id: number) {
