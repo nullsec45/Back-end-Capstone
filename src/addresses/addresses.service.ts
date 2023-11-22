@@ -32,8 +32,10 @@ export class AddressesService {
     });
   }
 
-  findAll() {
-    return `This action returns all addresses`;
+  async findAll(userId: string) {
+    return await this.prisma.userAddress.findMany({
+      where: { userId },
+    });
   }
 
   findOne(id: number) {

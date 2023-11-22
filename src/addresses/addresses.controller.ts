@@ -41,8 +41,17 @@ export class AddressesController {
   }
 
   @Get()
-  findAll() {
-    return this.addressesService.findAll();
+  async findAll(@Req() req: AuthenticatedRequest) {
+    const userId = req.user.sub;
+    const addresses = await this.addressesService.findAll(userId);
+
+    return {
+      data: addresses,
+      statusCode: HttpStatus.OK,
+      meta: {
+        totalItems: addresses.length,
+      },
+    };
   }
 
   @Get(':id')
