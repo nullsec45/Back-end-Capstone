@@ -78,7 +78,12 @@ export class AddressesService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+  async remove(addressId: string, userId: string) {
+    return await this.prisma.userAddress.delete({
+      where: {
+        id: addressId,
+        userId,
+      },
+    });
   }
 }

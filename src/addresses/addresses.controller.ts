@@ -91,7 +91,17 @@ export class AddressesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.addressesService.remove(+id);
+  async remove(
+    @Param('id') addressId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+
+    await this.addressesService.remove(addressId, userId);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'address successfully deleted',
+    };
   }
 }
