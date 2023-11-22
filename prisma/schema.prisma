@@ -66,7 +66,9 @@ model Store {
   userId          String    @unique // 1-1
   storeAddress    StoreAddress[]
   products        Product[]
+  orders          Order[]
   name            String    @unique
+  accountNumber   String
   description     String    @db.Text
   profilePicture  String
   status          Boolean   @default(false)
@@ -154,6 +156,8 @@ model Order {
   userId          String  
   userAddress     UserAddress   @relation(fields: [userAddressId], references: [id])
   userAddressId   String
+  store           Store         @relation(fields: [storeId], references: [id])
+  storeId         String
   products        OrderDetail[]
   transaction     Transaction?
   totalAmount     Float         @db.Double
