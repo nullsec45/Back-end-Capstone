@@ -1,11 +1,8 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
   Req,
   HttpCode,
@@ -13,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { AuthenticatedRequest } from '../../typings';
 
@@ -44,26 +40,44 @@ export class TransactionsController {
     };
   }
 
-  @Get()
-  findAll() {
-    return this.transactionsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateTransactionDto: UpdateTransactionDto,
+  @Post(':id/approve-payment')
+  @HttpCode(HttpStatus.OK)
+  async approvePayment(
+    @Param('id') transactionId: string,
+    @Req() req: AuthenticatedRequest,
   ) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+    const userId = req.user.sub;
+
+    const transaction = await this.transactionsService.approvePayment(
+      transactionId,
+      userId,
+    );
+
+    return {
+      data: transaction,
+      statusCode: HttpStatus.OK,
+      message: 'payment is approved. please process the product to be shipped',
+    };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+  @Post(':id/reject-payment')
+  @HttpCode(HttpStatus.OK)
+  async rejectPayment(
+    @Param('id') transactionId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+
+    const transaction = await this.transactionsService.rejectPayment(
+      transactionId,
+      userId,
+    );
+
+    return {
+      data: transaction,
+      statusCode: HttpStatus.OK,
+      message:
+        'payment is rejected. please give the user a reason why the payment was rejected',
+    };
   }
 }
