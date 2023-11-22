@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../prisma.service';
 import { ProductsService } from '../products/products.service';
 import { calculateOrderPriceDetails } from './utils';
-import { Order } from '@prisma/client';
 import { BadRequestCustomException } from '../../customExceptions/BadRequestCustomException';
 
 @Injectable()
@@ -64,6 +62,9 @@ export class OrdersService {
           },
         },
       },
+      include: {
+        transaction: true,
+      },
     });
   }
 
@@ -84,7 +85,7 @@ export class OrdersService {
         const {
           userId,
           userAddressId,
-          transaction: { id: idTransaction, orderId, ...restTransaction },
+          transaction: { orderId, ...restTransaction },
           ...rest
         } = order;
 
@@ -126,7 +127,7 @@ export class OrdersService {
           updatedAt,
           ...restUserAddress
         },
-        transaction: { id: idTransaction, orderId, ...restTransaction },
+        transaction: { orderId, ...restTransaction },
         ...rest
       } = order;
 
