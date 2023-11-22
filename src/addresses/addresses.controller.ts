@@ -28,13 +28,13 @@ export class AddressesController {
   ) {
     const userId = req.user.sub;
 
-    const address = await this.addressesService.create(
+    const createdAddress = await this.addressesService.create(
       createAddressDto,
       userId,
     );
 
     return {
-      data: address,
+      data: createdAddress,
       statusCode: HttpStatus.CREATED,
       message: 'address successfully created',
     };
@@ -55,13 +55,39 @@ export class AddressesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.addressesService.findOne(+id);
+  async findOne(
+    @Param('id') addressId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+
+    const address = await this.addressesService.findOne(addressId, userId);
+
+    return {
+      data: address,
+      statusCode: HttpStatus.OK,
+    };
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAddressDto: UpdateAddressDto) {
-    return this.addressesService.update(+id, updateAddressDto);
+  async update(
+    @Param('id') addressId: string,
+    @Body() updateAddressDto: UpdateAddressDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+
+    const updatedAddress = await this.addressesService.update(
+      addressId,
+      updateAddressDto,
+      userId,
+    );
+
+    return {
+      data: updatedAddress,
+      statusCode: HttpStatus.OK,
+      message: 'address successfully updated',
+    };
   }
 
   @Delete(':id')

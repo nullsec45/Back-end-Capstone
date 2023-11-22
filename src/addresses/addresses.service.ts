@@ -38,8 +38,13 @@ export class AddressesService {
     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} address`;
+  async findOne(addressId: string, userId: string) {
+    return await this.prisma.userAddress.findUnique({
+      where: {
+        id: addressId,
+        userId,
+      },
+    });
   }
 
   update(id: number, updateAddressDto: UpdateAddressDto) {
