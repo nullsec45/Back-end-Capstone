@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { PrismaService } from '../prisma.service';
+import { ForbiddenCustomException } from '../../customExceptions/ForbiddenCustomException';
+import { NotFoundCustomException } from '../../customExceptions/NotFoundCustomException';
 
 @Injectable()
 export class AddressesService {
@@ -39,12 +41,16 @@ export class AddressesService {
   }
 
   async findOne(addressId: string, userId: string) {
-    return await this.prisma.userAddress.findUnique({
+    const address = await this.prisma.userAddress.findUnique({
       where: {
         id: addressId,
         userId,
       },
     });
+
+    if (!address) throw new NotFoundCustomException('address not found');
+
+    return address;
   }
 
   async update(
@@ -61,11 +67,15 @@ export class AddressesService {
       postalCode,
       province,
     } = updateAddressDto;
+    const isAllowed = await this.checkIsUserAllowedToModify(addressId, userId);
+    if (!isAllowed)
+      throw new ForbiddenCustomException(
+        'you are not allowed to edit this data',
+      );
 
     return await this.prisma.userAddress.update({
       where: {
         id: addressId,
-        userId,
       },
       data: {
         province,
@@ -80,11 +90,34 @@ export class AddressesService {
   }
 
   async remove(addressId: string, userId: string) {
+    const isAllowed = await this.checkIsUserAllowedToModify(addressId, userId);
+    if (!isAllowed)
+      throw new ForbiddenCustomException(
+        'you are not allowed to delete this data',
+      );
+
     return await this.prisma.userAddress.delete({
       where: {
         id: addressId,
-        userId,
       },
     });
+  }
+
+  private async checkIsUserAllowedToModify(addressId: string, userId: string) {
+    const address = await this.prisma.userAddress.findUnique({
+      where: { id: addressId },
+      select: {
+        id: true,
+        userId: true,
+      },
+    });
+
+    // jika address dengan id tersebut tidak ditemukan
+    if (!address) throw new NotFoundCustomException('address not found');
+
+    // jika address tersebut bukan milik dari user yang terautentikasi, maka jangan ijinkan untuk modifikasi data
+    if (address?.userId === userId) return true;
+
+    return false;
   }
 }
