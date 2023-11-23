@@ -46,6 +46,20 @@ export class StoresService {
         id,
       },
       include: {
+        orders: {
+          include: {
+            transaction: {
+              select: {
+                id: true,
+                paymentMethod: true,
+                paymentProof: true,
+                status: true,
+                transactionAmount: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
         products: true,
         storeAddress: true,
       },
