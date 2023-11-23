@@ -54,6 +54,7 @@ model UserAddress {
   postalCode      String
   latitude        String
   longitude       String
+  deleted         Boolean   @default(false)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   

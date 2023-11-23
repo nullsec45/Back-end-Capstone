@@ -36,7 +36,10 @@ export class AddressesService {
 
   async findAll(userId: string) {
     return await this.prisma.userAddress.findMany({
-      where: { userId },
+      where: {
+        userId,
+        deleted: false,
+      },
     });
   }
 
@@ -45,6 +48,7 @@ export class AddressesService {
       where: {
         id: addressId,
         userId,
+        deleted: false,
       },
     });
 
@@ -76,6 +80,7 @@ export class AddressesService {
     return await this.prisma.userAddress.update({
       where: {
         id: addressId,
+        deleted: false,
       },
       data: {
         province,
@@ -96,9 +101,12 @@ export class AddressesService {
         'you are not allowed to delete this data',
       );
 
-    return await this.prisma.userAddress.delete({
+    return await this.prisma.userAddress.update({
       where: {
         id: addressId,
+      },
+      data: {
+        deleted: true,
       },
     });
   }
@@ -109,6 +117,7 @@ export class AddressesService {
       select: {
         id: true,
         userId: true,
+        deleted: false,
       },
     });
 
