@@ -113,6 +113,7 @@ model Product {
   price           Float     @db.Double
   maximumRental   Int
   stock           Int
+  availableStock  Int
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
