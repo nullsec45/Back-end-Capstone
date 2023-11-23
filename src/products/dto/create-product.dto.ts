@@ -29,6 +29,9 @@ export class CreateProductDto {
   @IsNumber()
   stock: number;
 
+  @IsNumber()
+  availableStock: number;
+
   @IsArray()
   @ArrayNotEmpty()
   @IsString({ each: true })

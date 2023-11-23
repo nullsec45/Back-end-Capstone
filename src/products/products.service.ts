@@ -16,6 +16,7 @@ export class ProductsService {
     return await this.prisma.product.create({
       data: {
         ...product,
+        availableStock: product.stock,
         productPictures: {
           createMany: {
             data: transformedProductPictures,
@@ -29,6 +30,17 @@ export class ProductsService {
     return await this.prisma.product.findMany({
       include: {
         productPictures: true,
+        store: {
+          select: {
+            id: true,
+            name: true,
+            storeAddress: {
+              select: {
+                city: true,
+              },
+            },
+          },
+        },
       },
     });
   }
@@ -43,22 +55,6 @@ export class ProductsService {
         store: true,
         reviews: true,
         productPictures: true,
-      },
-    });
-  }
-
-  async findManyById(ids: string[]) {
-    return await this.prisma.product.findMany({
-      where: {
-        id: {
-          in: ids,
-        },
-      },
-      select: {
-        id: true,
-        price: true,
-        stock: true,
-        maximumRental: true,
       },
     });
   }
