@@ -65,7 +65,7 @@ model Store {
   id              String    @id @default(uuid())
   user            User      @relation(fields: [userId], references: [id])
   userId          String    @unique // 1-1
-  storeAddress    StoreAddress[]
+  storeAddress    StoreAddress?
   products        Product[]
   orders          Order[]
   name            String    @unique
@@ -84,7 +84,7 @@ model Store {
 model StoreAddress {
   id              String    @id @default(uuid())
   store           Store     @relation(fields: [storeId], references: [id])
-  storeId         String    // 1-n relation
+  storeId         String    @unique // 1-1 relation
   province        String
   city            String
   district        String
@@ -113,6 +113,7 @@ model Product {
   price           Float     @db.Double
   maximumRental   Int
   stock           Int
+  availableStock  Int
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   

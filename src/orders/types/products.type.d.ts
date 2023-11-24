@@ -8,6 +8,7 @@ type ProductsInfo = {
   id: string;
   price: number;
   stock: number;
+  availableStock: number;
   maximumRental: number;
 };
 
