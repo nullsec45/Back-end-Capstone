@@ -7,7 +7,7 @@ import { ConflictCustomException } from '../../customExceptions/ConflictCustomEx
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createUserDto: CreateUserDto) {
     const isEmailExist = await this.findByEmail(createUserDto.email);
@@ -35,7 +35,6 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    console.log(id);
     const user = await this.prisma.user.findUnique({
       where: {
         id,
