@@ -1,19 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from '../prisma.service';
 import { ProductsService } from '../products/products.service';
-import { calculateOrderPriceDetails } from './utils';
-import { Order } from '@prisma/client';
+import {
+  calculateOrderPriceDetails,
+  checkStockAvailability,
+  mappingOrderPriceDetailProducts,
+} from './utils';
 import { BadRequestCustomException } from '../../customExceptions/BadRequestCustomException';
 
 @Injectable()
 export class OrdersService {
-  constructor(
-    private prisma: PrismaService,
-    private productsService: ProductsService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(createOrderDto: CreateOrderDto, userId: string) {
     const {
@@ -21,50 +20,97 @@ export class OrdersService {
       shipping,
       transaction,
       userAddressId,
+      storeId,
     } = createOrderDto;
 
-    const productInfo = await this.productsService.findManyById(
-      productsInRequest.map((product) => product.id),
-    );
-
-    const orderPriceDetails = calculateOrderPriceDetails(
-      productsInRequest,
-      productInfo,
-    );
-
-    // variabel mappedOrderPriceDetailProducts untuk dikirim ke tabel OrderDetail di database agar sesuai aturan schema Prisma
-    const mappedOrderPriceDetailProducts = orderPriceDetails.products.map(
-      (product) => ({
-        quantity: product.quantity,
-        rentPeriod: product.rentPeriod,
-        price: product.price,
-        subTotal: product.subTotal,
-        product: {
-          connect: {
-            id: product.id,
+    const orderTransaction = () => {
+      return this.prisma.$transaction(async (tx) => {
+        // 1. Ambil info produk dulu
+        const productInfo = await tx.product.findMany({
+          where: {
+            id: {
+              in: productsInRequest.map((product) => product.id),
+            },
           },
-        },
-      }),
-    );
+          select: {
+            id: true,
+            price: true,
+            stock: true,
+            availableStock: true,
+            maximumRental: true,
+          },
+        });
 
-    return await this.prisma.order.create({
-      data: {
-        userId,
-        userAddressId,
-        shipping,
-        status: 'PENDING',
-        totalAmount: orderPriceDetails.totalAmount,
-        products: {
-          create: mappedOrderPriceDetailProducts,
-        },
-        transaction: {
-          create: {
-            paymentMethod: transaction.paymentMethod,
+        // 2. Cek apakah stok masih tersedia (cek menggunakan kolom availableStock)
+        const isStockAvailable = checkStockAvailability(
+          productsInRequest,
+          productInfo,
+        );
+        if (!isStockAvailable)
+          throw new BadRequestCustomException(
+            'stock not available, please reduce the quantity',
+          );
+
+        // ??? MUNGKIN BISA DI CEK JUGA Maximal Rental nyaq, tapi SKIP DULUU ngejar MVP
+
+        // 3 Siapkan dulu object yang digunakan untuk query ke database
+        const orderPriceDetails = calculateOrderPriceDetails(
+          productsInRequest,
+          productInfo,
+        );
+        const mappedOrderPriceDetailProducts =
+          mappingOrderPriceDetailProducts(orderPriceDetails);
+
+        // 4. Buatkan Order
+        const order = await tx.order.create({
+          data: {
+            userId,
+            userAddressId,
+            shipping,
+            storeId,
             status: 'PENDING',
+            totalAmount: orderPriceDetails.totalAmount,
+            products: {
+              create: mappedOrderPriceDetailProducts,
+            },
+            transaction: {
+              create: {
+                paymentMethod: transaction.paymentMethod,
+                status: 'PENDING',
+              },
+            },
           },
-        },
-      },
-    });
+          include: {
+            transaction: true,
+          },
+        });
+
+        // 5. Cek apakah order berhasil dibuat
+        if (!order) {
+          throw new BadRequestCustomException(
+            'something went wrong, failed to process your order',
+          );
+        }
+
+        // 6. Jika order berhasil, maka kurangi value stok yang tersedia pada produk nya
+        for (const product of productsInRequest) {
+          await tx.product.update({
+            where: { id: product.id },
+            data: {
+              availableStock: {
+                decrement: product.quantity,
+              },
+            },
+          });
+        }
+
+        // 7. return order result
+        return order;
+      });
+    };
+
+    const order = await orderTransaction();
+    return order;
   }
 
   async findAll(userId: string) {
@@ -84,7 +130,7 @@ export class OrdersService {
         const {
           userId,
           userAddressId,
-          transaction: { id: idTransaction, orderId, ...restTransaction },
+          transaction: { orderId, ...restTransaction },
           ...rest
         } = order;
 
@@ -126,7 +172,7 @@ export class OrdersService {
           updatedAt,
           ...restUserAddress
         },
-        transaction: { id: idTransaction, orderId, ...restTransaction },
+        transaction: { orderId, ...restTransaction },
         ...rest
       } = order;
 

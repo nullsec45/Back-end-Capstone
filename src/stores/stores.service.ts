@@ -9,7 +9,8 @@ export class StoresService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createStoreDto: CreateStoreDto) {
-    const { name, description, profilePicture, userId } = createStoreDto;
+    const { name, description, profilePicture, userId, accountNumber } =
+      createStoreDto;
 
     const isStoreNameExist = await this.findByName(name);
     if (isStoreNameExist)
@@ -19,6 +20,7 @@ export class StoresService {
       data: {
         name,
         description,
+        accountNumber,
         profilePicture,
         userId,
       },
@@ -44,6 +46,20 @@ export class StoresService {
         id,
       },
       include: {
+        orders: {
+          include: {
+            transaction: {
+              select: {
+                id: true,
+                paymentMethod: true,
+                paymentProof: true,
+                status: true,
+                transactionAmount: true,
+                updatedAt: true,
+              },
+            },
+          },
+        },
         products: true,
         storeAddress: true,
       },

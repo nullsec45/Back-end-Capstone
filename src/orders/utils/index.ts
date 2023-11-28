@@ -29,3 +29,38 @@ export const calculateOrderPriceDetails = (
 
   return orderPriceDetails;
 };
+
+export const checkStockAvailability = (
+  productsInRequest: ProductsInRequest[],
+  productInfo: ProductsInfo[],
+) => {
+  let isStockAvailable = true;
+
+  productsInRequest.forEach((product) => {
+    const productDetails = productInfo.find((info) => info.id === product.id);
+    if (product.quantity > productDetails.availableStock)
+      isStockAvailable = false;
+  });
+
+  return isStockAvailable;
+};
+
+export const mappingOrderPriceDetailProducts = (
+  orderPriceDetails: OrderPriceDetails,
+) => {
+  const mappedOrderPriceDetailProducts = orderPriceDetails.products.map(
+    (product) => ({
+      quantity: product.quantity,
+      rentPeriod: product.rentPeriod,
+      price: product.price,
+      subTotal: product.subTotal,
+      product: {
+        connect: {
+          id: product.id,
+        },
+      },
+    }),
+  );
+
+  return mappedOrderPriceDetailProducts;
+};
