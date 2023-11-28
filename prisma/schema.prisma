@@ -124,7 +124,7 @@ model Product {
 model Category {
   id              String    @id @default(uuid())
   products        Product[]
-  name            String
+  name            String  @unique
   description     String?   @db.Text
   
   @@map("categories")

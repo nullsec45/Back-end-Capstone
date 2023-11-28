@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { PrismaService } from './prisma.service';
 import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
+import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { AddressesModule } from './addresses/addresses.module';
 
@@ -19,10 +20,11 @@ import { AddressesModule } from './addresses/addresses.module';
     UsersModule,
     ProductsModule,
     OrdersModule,
+    CategoriesModule,
     TransactionsModule,
     AddressesModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
-export class AppModule {}
+export class AppModule { }
