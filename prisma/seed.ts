@@ -1,38 +1,25 @@
 import { PrismaClient } from '@prisma/client';
+import { categories, users } from './seederData';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  const ahmad = await prisma.user.upsert({
-    where: { email: 'ahmad@gmail.com' },
-    update: {},
-    create: {
-      email: 'ahmad@gmail.com',
-      password: 'ahmad',
-      username: 'ahmad',
-    },
+  await prisma.user.deleteMany();
+  await prisma.category.deleteMany();
+
+  const createdUsers = await prisma.user.createMany({
+    data: users,
   });
 
-  const electronic = await prisma.category.upsert({
-    where: { id: 'c58d789f-c681-4b36-9710-411bfbb6f7b3' },
-    update: {},
-    create: {
-      id: 'c58d789f-c681-4b36-9710-411bfbb6f7b3',
-      name: 'electronic',
-      description: 'desc elektronik',
-    },
+  console.log(`Users seed successfully, created ${createdUsers.count} data`);
+
+  const createdCategory = await prisma.category.createMany({
+    data: categories,
   });
 
-  // const store = await prisma.store.upsert({
-  //   where: {id: 'aaaa789f-c681-4b36-9710-411bfbb6aaaa'},
-  //   update: {},
-  //   create: {
-  //     id: 'aaaa789f-c681-4b36-9710-411bfbb6aaaa',
-  //     na
-  //   }
-  // })
-
-  console.log({ ahmad, electronic });
+  console.log(
+    `Categories seed successfully, created ${createdCategory.count} data`,
+  );
 }
 
 main()
