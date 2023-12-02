@@ -15,6 +15,10 @@ export class CreateAddressDto {
 
   @IsNotEmpty()
   @IsString()
+  subDistrict: string;
+
+  @IsNotEmpty()
+  @IsString()
   fullAddress: string;
 
   @IsNotEmpty()

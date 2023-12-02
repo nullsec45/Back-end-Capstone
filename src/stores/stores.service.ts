@@ -9,8 +9,14 @@ export class StoresService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createStoreDto: CreateStoreDto) {
-    const { name, description, profilePicture, userId, accountNumber } =
-      createStoreDto;
+    const {
+      name,
+      description,
+      profilePicture,
+      userId,
+      accountNumber,
+      storeAddress,
+    } = createStoreDto;
 
     const isStoreNameExist = await this.findByName(name);
     if (isStoreNameExist)
@@ -23,14 +29,19 @@ export class StoresService {
         accountNumber,
         profilePicture,
         userId,
+        storeAddress: {
+          create: {
+            ...storeAddress,
+          },
+        },
       },
       include: {
-        user: true,
+        storeAddress: true,
       },
     });
   }
 
-  async findByName(storeName: string) {
+  private async findByName(storeName: string) {
     return await this.prisma.store.findUnique({
       where: { name: storeName },
     });
@@ -67,7 +78,14 @@ export class StoresService {
   }
 
   async update(id: string, updateStoreDto: UpdateStoreDto) {
-    const { name, description, profilePicture, status } = updateStoreDto;
+    const {
+      name,
+      description,
+      profilePicture,
+      status,
+      accountNumber,
+      storeAddress,
+    } = updateStoreDto;
 
     return await this.prisma.store.update({
       where: {
@@ -78,6 +96,12 @@ export class StoresService {
         description,
         profilePicture,
         status,
+        accountNumber,
+        storeAddress: {
+          update: {
+            ...storeAddress,
+          },
+        },
       },
     });
   }
