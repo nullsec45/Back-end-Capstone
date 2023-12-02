@@ -34,6 +34,8 @@ export class ProductsService {
           select: {
             id: true,
             name: true,
+            profilePicture: true,
+            verified: true,
             storeAddress: {
               select: {
                 city: true,
