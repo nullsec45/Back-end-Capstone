@@ -51,6 +51,7 @@ model UserAddress {
   province        String
   city            String
   district        String
+  subDistrict     String
   fullAddress     String
   postalCode      String
   latitude        String
@@ -70,7 +71,7 @@ model Store {
   products        Product[]
   orders          Order[]
   name            String    @unique
-  accountNumber   String
+  accountNumber   String    @unique
   description     String    @db.Text
   profilePicture  String
   status          Boolean   @default(false)
@@ -89,6 +90,7 @@ model StoreAddress {
   province        String
   city            String
   district        String
+  subDistrict     String
   fullAddress     String
   postalCode      String
   latitude        String
