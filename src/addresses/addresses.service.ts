@@ -11,13 +11,14 @@ export class AddressesService {
 
   async create(createAddressDto: CreateAddressDto, userId: string) {
     const {
+      province,
       city,
       district,
+      subDistrict,
+      fullAddress,
       latitude,
       longitude,
-      fullAddress,
       postalCode,
-      province,
     } = createAddressDto;
 
     return await this.prisma.userAddress.create({
@@ -26,6 +27,7 @@ export class AddressesService {
         province,
         city,
         district,
+        subDistrict,
         fullAddress,
         postalCode,
         latitude,
@@ -65,6 +67,7 @@ export class AddressesService {
     const {
       city,
       district,
+      subDistrict,
       latitude,
       longitude,
       fullAddress,
@@ -86,6 +89,7 @@ export class AddressesService {
         province,
         city,
         district,
+        subDistrict,
         fullAddress,
         postalCode,
         latitude,
