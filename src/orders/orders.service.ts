@@ -82,7 +82,7 @@ export class OrdersService {
             transaction: {
               create: {
                 paymentMethod: transaction.paymentMethod,
-                status: 'PENDING',
+                status: 'UNPAID',
               },
             },
           },
