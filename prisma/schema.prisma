@@ -238,7 +238,8 @@ enum OrderStatus {
 }
 
 enum TransactionStatus {
-  PENDING
+  UNPAID
+  AWATING_CONFIRMATION
   APPROVED
   REJECTED
 }
