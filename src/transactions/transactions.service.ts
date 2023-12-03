@@ -31,6 +31,7 @@ export class TransactionsService {
       data: {
         paymentProof,
         transactionAmount,
+        status: 'AWATING_CONFIRMATION',
       },
     });
 
