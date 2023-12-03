@@ -2,7 +2,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { PrismaService } from '../prisma.service';
-import { ProductsService } from '../products/products.service';
 import {
   calculateOrderPriceDetails,
   checkStockAvailability,
@@ -41,11 +40,18 @@ export class OrdersService {
           },
         });
 
+        // jika productId tidak ditemukan, maka throw error
+        if (!productInfo.length)
+          throw new BadRequestCustomException(
+            'product is not available to order, please check your product',
+          );
+
         // 2. Cek apakah stok masih tersedia (cek menggunakan kolom availableStock)
         const isStockAvailable = checkStockAvailability(
           productsInRequest,
           productInfo,
         );
+
         if (!isStockAvailable)
           throw new BadRequestCustomException(
             'stock not available, please reduce the quantity',

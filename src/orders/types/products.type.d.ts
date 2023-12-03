@@ -1,7 +1,8 @@
 type ProductsInRequest = {
   id: string;
   quantity: number;
-  rentPeriod: number;
+  rentFrom: string;
+  rentTo: string;
 };
 
 type ProductsInfo = {
