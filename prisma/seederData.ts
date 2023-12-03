@@ -15,6 +15,32 @@ export const users = [
   },
 ];
 
+export const userAddresses = [
+  {
+    id: 'userAddress-1',
+    userId: 'user-2',
+    province: 'Jawa Tengah',
+    city: 'Semarang',
+    district: 'Tembalang',
+    subDistrict: 'Klipang',
+    fullAddress: 'Jl Durian RT05/RW02 No.12',
+    postalCode: '50123',
+    latitude: '123.145',
+    longitude: '60.177',
+  },
+];
+
+export const stores = [
+  {
+    id: 'store-1',
+    userId: 'user-2',
+    name: 'Toko Kita',
+    description: 'Deskripsi Toko Kita',
+    accountNumber: '111155553333',
+    profilePicture: 'https://example.com/toko-kita.jpg',
+  },
+];
+
 export const categories = [
   {
     id: 'category-1',
@@ -27,3 +53,49 @@ export const categories = [
     description: 'Deskripsi Kategori Lainnya',
   },
 ];
+
+export const products = [
+  {
+    id: 'product-1',
+    storeId: 'store-1',
+    categoryId: 'category-1',
+    name: 'PS 5',
+    description: 'Deskripsi PS5 (Playstation 5)',
+    price: 100000,
+    maximumRental: 10,
+    stock: 8,
+    availableStock: 8,
+  },
+];
+
+export const order = {
+  id: 'order-1',
+  userId: 'user-2',
+  userAddressId: 'userAddress-1',
+  storeId: 'store-1',
+  shipping: 'GOSEND',
+  status: 'PENDING',
+  totalAmount: 100000,
+  products: {
+    create: [
+      {
+        quantity: 1,
+        rentFrom: '2023-12-02T17:00:00.000Z',
+        rentTo: '2023-12-03T17:00:00.000Z',
+        price: 100000,
+        subTotal: 100000,
+        product: {
+          connect: {
+            id: 'product-1',
+          },
+        },
+      },
+    ],
+  },
+  transaction: {
+    create: {
+      paymentMethod: 'TRANSFER',
+      status: 'PENDING',
+    },
+  },
+};

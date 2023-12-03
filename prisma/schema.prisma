@@ -183,7 +183,8 @@ model OrderDetail {
   quantity        Int
   price           Float     @db.Double
   subTotal        Float     @db.Double
-  rentPeriod      Int
+  rentFrom        DateTime
+  rentTo          DateTime
   
   @@map("order_details")
 }
