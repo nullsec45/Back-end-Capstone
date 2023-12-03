@@ -19,6 +19,9 @@ export const userAddresses = [
   {
     id: 'userAddress-1',
     userId: 'user-2',
+    label: "Rumah",
+    recipientName: "Bapak Budi",
+    phoneNumber: "08977771111",
     province: 'Jawa Tengah',
     city: 'Semarang',
     district: 'Tembalang',

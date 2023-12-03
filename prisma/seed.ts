@@ -11,6 +11,9 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Perhatikan urutan alur foreign key saat melakukan delete di seeder
+  await prisma.orderDetail.deleteMany();
+  await prisma.transaction.deleteMany();
+  await prisma.order.deleteMany();
   await prisma.product.deleteMany();
   await prisma.store.deleteMany();
   await prisma.userAddress.deleteMany();
@@ -76,7 +79,7 @@ async function main() {
       transaction: {
         create: {
           paymentMethod: 'TRANSFER',
-          status: 'PENDING',
+          status: 'UNPAID',
         },
       },
     },
