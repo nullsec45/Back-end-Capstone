@@ -11,6 +11,9 @@ export class AddressesService {
 
   async create(createAddressDto: CreateAddressDto, userId: string) {
     const {
+      label,
+      recipientName,
+      phoneNumber,
       province,
       city,
       district,
@@ -24,6 +27,9 @@ export class AddressesService {
     return await this.prisma.userAddress.create({
       data: {
         userId,
+        label,
+        recipientName,
+        phoneNumber,
         province,
         city,
         district,
@@ -65,6 +71,10 @@ export class AddressesService {
     userId: string,
   ) {
     const {
+      label,
+      recipientName,
+      phoneNumber,
+      province,
       city,
       district,
       subDistrict,
@@ -72,7 +82,6 @@ export class AddressesService {
       longitude,
       fullAddress,
       postalCode,
-      province,
     } = updateAddressDto;
     const isAllowed = await this.checkIsUserAllowedToModify(addressId, userId);
     if (!isAllowed)
@@ -86,6 +95,9 @@ export class AddressesService {
         deleted: false,
       },
       data: {
+        label,
+        recipientName,
+        phoneNumber,
         province,
         city,
         district,
