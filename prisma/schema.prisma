@@ -48,6 +48,9 @@ model UserAddress {
   user            User      @relation(fields: [userId], references: [id])
   userId          String    // 1-n relation
   orders          Order[]
+  label           String
+  recipientName   String
+  phoneNumber     String
   province        String
   city            String
   district        String
