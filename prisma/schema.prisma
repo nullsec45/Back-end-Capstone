@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -48,9 +48,13 @@ model UserAddress {
   user            User      @relation(fields: [userId], references: [id])
   userId          String    // 1-n relation
   orders          Order[]
+  label           String
+  recipientName   String
+  phoneNumber     String
   province        String
   city            String
   district        String
+  subDistrict     String
   fullAddress     String
   postalCode      String
   latitude        String
@@ -70,7 +74,7 @@ model Store {
   products        Product[]
   orders          Order[]
   name            String    @unique
-  accountNumber   String
+  accountNumber   String    @unique
   description     String    @db.Text
   profilePicture  String
   status          Boolean   @default(false)
@@ -89,6 +93,7 @@ model StoreAddress {
   province        String
   city            String
   district        String
+  subDistrict     String
   fullAddress     String
   postalCode      String
   latitude        String
@@ -124,7 +129,7 @@ model Product {
 model Category {
   id              String    @id @default(uuid())
   products        Product[]
-  name            String
+  name            String  @unique
   description     String?   @db.Text
   
   @@map("categories")
@@ -181,7 +186,8 @@ model OrderDetail {
   quantity        Int
   price           Float     @db.Double
   subTotal        Float     @db.Double
-  rentPeriod      Int
+  rentFrom        DateTime
+  rentTo          DateTime
   
   @@map("order_details")
 }
@@ -235,7 +241,8 @@ enum OrderStatus {
 }
 
 enum TransactionStatus {
-  PENDING
+  UNPAID
+  AWATING_CONFIRMATION
   APPROVED
   REJECTED
 }

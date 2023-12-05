@@ -7,6 +7,7 @@ import {
   IsString,
   ArrayNotEmpty,
   ValidateNested,
+  IsDateString,
 } from 'class-validator';
 
 enum ShippingMethod {
@@ -17,6 +18,7 @@ enum ShippingMethod {
 enum PaymentMethod {
   TRANSFER = 'TRANSFER',
 }
+
 class ProductDto {
   @IsNotEmpty()
   @IsString()
@@ -27,8 +29,12 @@ class ProductDto {
   quantity: number;
 
   @IsNotEmpty()
-  @IsNumber()
-  rentPeriod: number;
+  @IsDateString()
+  rentFrom: string;
+
+  @IsNotEmpty()
+  @IsDateString()
+  rentTo: string;
 }
 
 class TransactionDto {

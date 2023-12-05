@@ -1,0 +1,39 @@
+version: '3.8'
+
+networks:
+  backend-net:
+    driver: bridge
+
+services:
+  mysql:
+    container_name: mysql
+    networks:
+      - backend-net
+    image: mysql:8.0.35-debian
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=ezrent123
+      - MYSQL_DATABASE=ezrent
+
+  backend-app:
+    container_name: backend-app
+    networks:
+      - backend-net
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=mysql://root:ezrent123@mysql:3306/ezrent
+      - JWT_SECRET=dicodingcapstone_ezrent
+
+volumes:
+  mysql-data:
