@@ -47,6 +47,14 @@ export class CreateStoreDto {
   @IsNotEmpty()
   @MaxLength(100)
   name: string;
+  
+  @IsNotEmpty()
+  @IsString()
+  phoneNumber: string;
+  
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 
   @IsNotEmpty()
   @IsString()
@@ -54,8 +62,8 @@ export class CreateStoreDto {
 
   @IsNotEmpty()
   @IsString()
-  description: string;
-
+  bank: string;
+  
   @IsNotEmpty()
   @IsString()
   profilePicture: string;

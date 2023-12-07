@@ -74,6 +74,8 @@ model Store {
   products        Product[]
   orders          Order[]
   name            String    @unique
+  phoneNumber     String
+  bank            String
   accountNumber   String    @unique
   description     String    @db.Text
   profilePicture  String
