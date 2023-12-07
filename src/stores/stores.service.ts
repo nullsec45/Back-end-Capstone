@@ -51,6 +51,19 @@ export class StoresService {
     });
   }
 
+  async findByUserId(userId: string) {
+    return await this.prisma.store.findUnique({
+      where: {
+        userId,
+      },
+      include: {
+        orders: true,
+        products: true,
+        storeAddress: true,
+      },
+    });
+  }
+
   async findAll() {
     return await this.prisma.store.findMany();
   }

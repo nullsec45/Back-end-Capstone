@@ -4,10 +4,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { hash } from 'bcryptjs';
 import { ConflictCustomException } from '../../customExceptions/ConflictCustomException';
+import { StoresService } from '../stores/stores.service';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private storesService: StoresService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const isEmailExist = await this.findByEmail(createUserDto.email);
@@ -69,11 +73,15 @@ export class UsersService {
     });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async getMyStore(userId: string) {
+    return await this.storesService.findByUserId(userId);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+  // update(id: number, updateUserDto: UpdateUserDto) {
+  //   return `This action updates a #${id} user`;
+  // }
+
+  // remove(id: number) {
+  //   return `This action removes a #${id} user`;
+  // }
 }
