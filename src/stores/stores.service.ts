@@ -11,10 +11,12 @@ export class StoresService {
   async create(createStoreDto: CreateStoreDto) {
     const {
       name,
+      phoneNumber,
       description,
+      bank,
+      accountNumber,
       profilePicture,
       userId,
-      accountNumber,
       storeAddress,
     } = createStoreDto;
 
@@ -25,7 +27,9 @@ export class StoresService {
     return await this.prisma.store.create({
       data: {
         name,
+        phoneNumber,
         description,
+        bank,
         accountNumber,
         profilePicture,
         userId,
@@ -80,10 +84,12 @@ export class StoresService {
   async update(id: string, updateStoreDto: UpdateStoreDto) {
     const {
       name,
+      phoneNumber,
       description,
+      bank,
+      accountNumber,
       profilePicture,
       status,
-      accountNumber,
       storeAddress,
     } = updateStoreDto;
 
@@ -93,10 +99,12 @@ export class StoresService {
       },
       data: {
         name,
+        phoneNumber,
         description,
+        bank,
+        accountNumber,
         profilePicture,
         status,
-        accountNumber,
         storeAddress: {
           update: {
             ...storeAddress,
