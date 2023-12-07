@@ -11,6 +11,7 @@ import { OrdersModule } from './orders/orders.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { AddressesModule } from './addresses/addresses.module';
+import { ProductReviewModule } from './product-review/product-review.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AddressesModule } from './addresses/addresses.module';
     CategoriesModule,
     TransactionsModule,
     AddressesModule,
+    ProductReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
