@@ -1,3 +1,5 @@
+import { differenceInDays } from 'date-fns';
+
 export const calculateOrderPriceDetails = (
   productsInRequest: ProductsInRequest[],
   productInfo: ProductsInfo[],
@@ -11,14 +13,22 @@ export const calculateOrderPriceDetails = (
     const productDetails = productInfo.find((info) => info.id === product.id);
 
     if (productDetails) {
+      const rentFrom = new Date(product.rentFrom);
+      const rentTo = new Date(product.rentTo);
+      const INCLUDE_TODAY_SELECTED = 1;
+
+      const rentalDurationInDay =
+        Math.abs(differenceInDays(rentFrom, rentTo)) + INCLUDE_TODAY_SELECTED;
+
       const subTotal =
         // quantity * jangka sewa * harga barang
-        product.quantity * product.rentPeriod * productDetails.price;
+        product.quantity * rentalDurationInDay * productDetails.price;
 
       orderPriceDetails.products.push({
         id: product.id,
         quantity: product.quantity,
-        rentPeriod: product.rentPeriod,
+        rentFrom: product.rentFrom,
+        rentTo: product.rentTo,
         price: productDetails.price,
         subTotal,
       });
@@ -51,7 +61,8 @@ export const mappingOrderPriceDetailProducts = (
   const mappedOrderPriceDetailProducts = orderPriceDetails.products.map(
     (product) => ({
       quantity: product.quantity,
-      rentPeriod: product.rentPeriod,
+      rentFrom: product.rentFrom,
+      rentTo: product.rentTo,
       price: product.price,
       subTotal: product.subTotal,
       product: {

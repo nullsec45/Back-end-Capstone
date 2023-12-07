@@ -1,115 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `cart` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `category` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `order` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `orderdetail` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `product` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `productincart` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `productpicture` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `profile` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `review` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `store` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `storeaddress` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `transaction` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `user` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `useraddress` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE `cart` DROP FOREIGN KEY `Cart_userId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `order` DROP FOREIGN KEY `Order_userAddressId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `order` DROP FOREIGN KEY `Order_userId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `orderdetail` DROP FOREIGN KEY `OrderDetail_orderId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `orderdetail` DROP FOREIGN KEY `OrderDetail_productId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `product` DROP FOREIGN KEY `Product_categoryId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `product` DROP FOREIGN KEY `Product_storeId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `productincart` DROP FOREIGN KEY `ProductInCart_cartId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `productincart` DROP FOREIGN KEY `ProductInCart_productId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `productpicture` DROP FOREIGN KEY `ProductPicture_productId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `profile` DROP FOREIGN KEY `Profile_userId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `review` DROP FOREIGN KEY `Review_productId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `review` DROP FOREIGN KEY `Review_userId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `store` DROP FOREIGN KEY `Store_userId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `storeaddress` DROP FOREIGN KEY `StoreAddress_storeId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `transaction` DROP FOREIGN KEY `Transaction_orderId_fkey`;
-
--- DropForeignKey
-ALTER TABLE `useraddress` DROP FOREIGN KEY `UserAddress_profileId_fkey`;
-
--- DropTable
-DROP TABLE `cart`;
-
--- DropTable
-DROP TABLE `category`;
-
--- DropTable
-DROP TABLE `order`;
-
--- DropTable
-DROP TABLE `orderdetail`;
-
--- DropTable
-DROP TABLE `product`;
-
--- DropTable
-DROP TABLE `productincart`;
-
--- DropTable
-DROP TABLE `productpicture`;
-
--- DropTable
-DROP TABLE `profile`;
-
--- DropTable
-DROP TABLE `review`;
-
--- DropTable
-DROP TABLE `store`;
-
--- DropTable
-DROP TABLE `storeaddress`;
-
--- DropTable
-DROP TABLE `transaction`;
-
--- DropTable
-DROP TABLE `user`;
-
--- DropTable
-DROP TABLE `useraddress`;
-
 -- CreateTable
 CREATE TABLE `users` (
     `id` VARCHAR(191) NOT NULL,
@@ -143,14 +31,19 @@ CREATE TABLE `profiles` (
 -- CreateTable
 CREATE TABLE `user_addresses` (
     `id` VARCHAR(191) NOT NULL,
-    `profileId` VARCHAR(191) NOT NULL,
+    `userId` VARCHAR(191) NOT NULL,
+    `label` VARCHAR(191) NOT NULL,
+    `recipientName` VARCHAR(191) NOT NULL,
+    `phoneNumber` VARCHAR(191) NOT NULL,
     `province` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
     `district` VARCHAR(191) NOT NULL,
+    `subDistrict` VARCHAR(191) NOT NULL,
     `fullAddress` VARCHAR(191) NOT NULL,
     `postalCode` VARCHAR(191) NOT NULL,
     `latitude` VARCHAR(191) NOT NULL,
     `longitude` VARCHAR(191) NOT NULL,
+    `deleted` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -162,15 +55,17 @@ CREATE TABLE `stores` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
+    `accountNumber` VARCHAR(191) NOT NULL,
     `description` TEXT NOT NULL,
     `profilePicture` VARCHAR(191) NOT NULL,
     `status` BOOLEAN NOT NULL DEFAULT false,
-    `verfied` BOOLEAN NOT NULL DEFAULT false,
+    `verified` BOOLEAN NOT NULL DEFAULT false,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
     UNIQUE INDEX `stores_userId_key`(`userId`),
     UNIQUE INDEX `stores_name_key`(`name`),
+    UNIQUE INDEX `stores_accountNumber_key`(`accountNumber`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -181,6 +76,7 @@ CREATE TABLE `store_addresses` (
     `province` VARCHAR(191) NOT NULL,
     `city` VARCHAR(191) NOT NULL,
     `district` VARCHAR(191) NOT NULL,
+    `subDistrict` VARCHAR(191) NOT NULL,
     `fullAddress` VARCHAR(191) NOT NULL,
     `postalCode` VARCHAR(191) NOT NULL,
     `latitude` VARCHAR(191) NOT NULL,
@@ -188,6 +84,7 @@ CREATE TABLE `store_addresses` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `store_addresses_storeId_key`(`storeId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -198,9 +95,10 @@ CREATE TABLE `products` (
     `storeId` VARCHAR(191) NOT NULL,
     `name` VARCHAR(191) NOT NULL,
     `description` TEXT NOT NULL,
-    `price` DECIMAL(65, 30) NOT NULL,
+    `price` DOUBLE NOT NULL,
     `maximumRental` INTEGER NOT NULL,
     `stock` INTEGER NOT NULL,
+    `availableStock` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -213,6 +111,7 @@ CREATE TABLE `categories` (
     `name` VARCHAR(191) NOT NULL,
     `description` TEXT NULL,
 
+    UNIQUE INDEX `categories_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -243,8 +142,10 @@ CREATE TABLE `orders` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `userAddressId` VARCHAR(191) NOT NULL,
-    `totalAmount` DECIMAL(65, 30) NOT NULL,
-    `status` ENUM('PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED') NOT NULL,
+    `storeId` VARCHAR(191) NOT NULL,
+    `totalAmount` DOUBLE NOT NULL,
+    `status` ENUM('PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'RETURNED', 'CANCELLED') NOT NULL,
+    `shipping` ENUM('PICKUP', 'GOSEND') NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -256,6 +157,11 @@ CREATE TABLE `order_details` (
     `id` VARCHAR(191) NOT NULL,
     `orderId` VARCHAR(191) NOT NULL,
     `productId` VARCHAR(191) NOT NULL,
+    `quantity` INTEGER NOT NULL,
+    `price` DOUBLE NOT NULL,
+    `subTotal` DOUBLE NOT NULL,
+    `rentFrom` DATETIME(3) NOT NULL,
+    `rentTo` DATETIME(3) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -264,9 +170,10 @@ CREATE TABLE `order_details` (
 CREATE TABLE `transactions` (
     `id` VARCHAR(191) NOT NULL,
     `orderId` VARCHAR(191) NOT NULL,
-    `paymentMethod` VARCHAR(191) NOT NULL,
-    `status` ENUM('PENDING', 'SUCCESS', 'FAILED') NOT NULL,
-    `transactionAmount` DECIMAL(65, 30) NOT NULL,
+    `paymentMethod` ENUM('TRANSFER', 'COD') NOT NULL,
+    `paymentProof` VARCHAR(191) NULL,
+    `status` ENUM('UNPAID', 'AWATING_CONFIRMATION', 'APPROVED', 'REJECTED') NOT NULL,
+    `transactionAmount` DOUBLE NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -287,6 +194,7 @@ CREATE TABLE `carts` (
 CREATE TABLE `product_in_cart` (
     `id` VARCHAR(191) NOT NULL,
     `productId` VARCHAR(191) NOT NULL,
+    `quantity` INTEGER NOT NULL,
     `cartId` VARCHAR(191) NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -296,7 +204,7 @@ CREATE TABLE `product_in_cart` (
 ALTER TABLE `profiles` ADD CONSTRAINT `profiles_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `user_addresses` ADD CONSTRAINT `user_addresses_profileId_fkey` FOREIGN KEY (`profileId`) REFERENCES `profiles`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `user_addresses` ADD CONSTRAINT `user_addresses_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `stores` ADD CONSTRAINT `stores_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -324,6 +232,9 @@ ALTER TABLE `orders` ADD CONSTRAINT `orders_userId_fkey` FOREIGN KEY (`userId`) 
 
 -- AddForeignKey
 ALTER TABLE `orders` ADD CONSTRAINT `orders_userAddressId_fkey` FOREIGN KEY (`userAddressId`) REFERENCES `user_addresses`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `orders` ADD CONSTRAINT `orders_storeId_fkey` FOREIGN KEY (`storeId`) REFERENCES `stores`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `order_details` ADD CONSTRAINT `order_details_orderId_fkey` FOREIGN KEY (`orderId`) REFERENCES `orders`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

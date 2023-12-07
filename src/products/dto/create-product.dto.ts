@@ -29,6 +29,7 @@ export class CreateProductDto {
   @IsNumber()
   stock: number;
 
+  @IsNotEmpty()
   @IsNumber()
   availableStock: number;
 
@@ -38,8 +39,10 @@ export class CreateProductDto {
   productPictures: string[];
 
   @IsNotEmpty()
+  @IsString()
   storeId: string;
 
   @IsNotEmpty()
+  @IsString()
   categoryId: string;
 }
