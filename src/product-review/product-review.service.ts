@@ -4,24 +4,17 @@ import { UpdateProductReviewDto } from './dto/update-product-review.dto';
 import { PrismaService } from '../prisma.service';
 import { ConflictCustomException } from '../../customExceptions/ConflictCustomException';
 
-
 @Injectable()
 export class ProductReviewService {
-  constructor(private readonly prisma: PrismaService) { }
-
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createProductReviewDto: CreateProductReviewDto) {
-    const {
-      userId,
-      productId,
-      rating,
-      comment
-    } = createProductReviewDto;
+    const { userId, productId, rating, comment } = createProductReviewDto;
 
     const isUserAlreadyReview = await this.findByUserId(productId, userId);
 
     if (isUserAlreadyReview) {
-      throw new ConflictCustomException('user already review')
+      throw new ConflictCustomException('user already review');
     }
 
     const createdReview = await this.prisma.review.create({
@@ -29,7 +22,7 @@ export class ProductReviewService {
         userId,
         productId,
         rating,
-        comment
+        comment,
       },
     });
 
@@ -39,16 +32,16 @@ export class ProductReviewService {
   async findAll(productId: string) {
     const dataReview = await this.prisma.review.findMany({
       where: {
-        productId
+        productId,
       },
       include: {
         user: {
           select: {
             id: true,
-            username: true
-          }
-        }
-      }
+            username: true,
+          },
+        },
+      },
     });
 
     return dataReview;
@@ -58,79 +51,86 @@ export class ProductReviewService {
     const dataReview = await this.prisma.review.findUnique({
       where: {
         id,
-        productId
+        productId,
       },
       include: {
         user: {
           select: {
             id: true,
-            username: true
-          }
+            username: true,
+          },
         },
       },
     });
 
     if (dataReview === null) {
-      throw new ConflictCustomException('review not found')
+      throw new ConflictCustomException('review not found');
     }
 
     return dataReview;
   }
 
   async findByUserId(productId: string, userId: string) {
-    const dataReview = await this.prisma.review.findUnique({
+    const dataReview = await this.prisma.review.findFirst({
       where: {
-        productId,
-        userId
-      }
+        AND: [{ productId }, { userId }],
+      },
     });
 
     return dataReview;
   }
 
-  async update(productId: string, id: string, updateProductReviewDto: UpdateProductReviewDto) {
-    if (await this.prisma.review.findUnique({
-      where: {
-        id,
-        productId
-      }
-    }) !== null) {
+  async update(
+    productId: string,
+    id: string,
+    updateProductReviewDto: UpdateProductReviewDto,
+  ) {
+    if (
+      (await this.prisma.review.findUnique({
+        where: {
+          id,
+          productId,
+        },
+      })) !== null
+    ) {
       const { rating, comment } = updateProductReviewDto;
 
       const updatedReview = await this.prisma.review.update({
         where: {
           id,
-          productId
+          productId,
         },
         data: {
           rating,
-          comment
-        }
+          comment,
+        },
       });
 
       return updatedReview;
     } else {
-      throw new ConflictCustomException('review not found')
+      throw new ConflictCustomException('review not found');
     }
   }
 
   async remove(productId: string, id: string) {
-    if (await this.prisma.review.findUnique({
-      where: {
-        id,
-        productId
-      }
-    }) !== null) {
+    if (
+      (await this.prisma.review.findUnique({
+        where: {
+          id,
+          productId,
+        },
+      })) !== null
+    ) {
       const deletedReview = await this.prisma.review.delete({
         where: {
           id,
-          productId
-        }
+          productId,
+        },
       });
 
       return deletedReview;
     } else {
-      throw new ConflictCustomException('review not found')
+      throw new ConflictCustomException('review not found');
     }
   }
 }
