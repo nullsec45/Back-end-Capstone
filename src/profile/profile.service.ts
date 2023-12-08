@@ -1,26 +1,101 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { PrismaService } from '../prisma.service';
+import { ConflictCustomException } from '../../customExceptions/ConflictCustomException';
+import { compare, hash } from 'bcryptjs';
 
 @Injectable()
 export class ProfileService {
-  create(createProfileDto: CreateProfileDto) {
-    return 'This action adds a new profile';
+  constructor(private readonly prisma: PrismaService) { }
+  async create(createProfileDto: CreateProfileDto) {
+    const {
+      userId,
+      fullname,
+      profilePicture,
+      gender,
+      dateOfbirth,
+      phoneNumber
+    } = createProfileDto;
+
+    const iso8601Date = new Date(dateOfbirth).toISOString();
+
+    return await this.prisma.profile.create({
+      data: {
+        userId,
+        fullname,
+        profilePicture,
+        gender,
+        dateOfbirth: iso8601Date,
+        phoneNumber
+      }
+    });
   }
 
-  findAll() {
-    return `This action returns all profile`;
+  async findOne(userId: string) {
+    const dataProfile = await this.prisma.profile.findUnique({
+      where: {
+        userId
+      }
+    });
+
+    if (dataProfile === null) {
+      throw new ConflictCustomException(`profile ${userId} not found`);
+    } else {
+      return dataProfile;
+    }
+
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} profile`;
+  async update(userId: string, updateProfileDto: UpdateProfileDto) {
+    const dataProfile = await this.prisma.profile.findUnique({
+      where: {
+        userId
+      }
+    });
+
+    if (dataProfile == null) {
+      throw new ConflictCustomException(`profile ${userId} not found`);
+    } else {
+      const { dateOfbirth, ...profile } = updateProfileDto;
+      const iso8601Date = new Date(dateOfbirth).toISOString();
+
+      return await this.prisma.profile.update({
+        where: {
+          userId
+        },
+        data: {
+          ...profile,
+          dateOfbirth: iso8601Date
+        }
+      });
+    }
   }
 
-  update(id: number, updateProfileDto: UpdateProfileDto) {
-    return `This action updates a #${id} profile`;
-  }
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
+    const { oldPassword, newPassword } = changePasswordDto;
 
-  remove(id: number) {
-    return `This action removes a #${id} profile`;
+    const selectOldPassword = await this.prisma.user.findFirst({
+      select: {
+        password: true
+      },
+      where: {
+        id: userId
+      }
+    });
+
+    if (await compare(oldPassword, selectOldPassword.password)) {
+      await this.prisma.user.update({
+        where: {
+          id: userId
+        },
+        data: {
+          password: await hash(newPassword, 10)
+        }
+      })
+    } else {
+      throw new ConflictCustomException('fail change password: please confirm the password again');
+    }
   }
 }
