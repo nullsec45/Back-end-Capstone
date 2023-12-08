@@ -1,34 +1,80 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Req,
+  UseGuards,
+  HttpStatus
+} from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { AuthenticatedRequest } from 'typings';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 
-@Controller('profile')
+@Controller('profiles')
 export class ProfileController {
-  constructor(private readonly profileService: ProfileService) {}
+  constructor(private readonly profileService: ProfileService) { }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createProfileDto: CreateProfileDto) {
-    return this.profileService.create(createProfileDto);
+  async create(
+    @Body() createProfileDto: CreateProfileDto,
+    @Req() req: AuthenticatedRequest) {
+    const userId = req.user.sub;
+
+    const createProfile = await this.profileService.create({
+      ...createProfileDto,
+      userId
+    });
+
+    return {
+      data: createProfile,
+      statusCode: HttpStatus.CREATED,
+      message: 'profile successfully created'
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.profileService.findAll();
+  @UseGuards(JwtAuthGuard)
+  @Get('me')
+  async findOne(@Req() req: AuthenticatedRequest) {
+    const userId = req.user.sub;
+    const dataProfile = await this.profileService.findOne(userId);
+
+    return {
+      data: dataProfile,
+      statusCode: HttpStatus.OK
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profileService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  async update(@Req() req: AuthenticatedRequest, @Body() updateProfileDto: UpdateProfileDto) {
+    const userId = req.user.sub;
+
+    const updateProfile = await this.profileService.update(userId, updateProfileDto);
+
+    return {
+      data: updateProfile,
+      statusCode: HttpStatus.OK,
+      message: 'review successfully update'
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
-    return this.profileService.update(+id, updateProfileDto);
-  }
+  @UseGuards(JwtAuthGuard)
+  @Patch('change-password')
+  async changePassword(@Req() req: AuthenticatedRequest, @Body() changePasswordDto: ChangePasswordDto) {
+    const userId = req.user.sub;
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profileService.remove(+id);
+    await this.profileService.changePassword(userId, changePasswordDto);
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'successfully change password'
+    }
   }
 }
