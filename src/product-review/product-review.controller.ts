@@ -15,7 +15,9 @@ import { CreateProductReviewDto } from './dto/create-product-review.dto';
 import { UpdateProductReviewDto } from './dto/update-product-review.dto';
 import { AuthenticatedRequest } from 'typings';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('product reviews')
 @Controller('products')
 export class ProductReviewController {
   constructor(
