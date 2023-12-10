@@ -13,6 +13,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { AddressesModule } from './addresses/addresses.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProductReviewModule } from './product-review/product-review.module';
+import { ProductCartsModule } from './product-carts/product-carts.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProductReviewModule } from './product-review/product-review.module';
     AddressesModule,
     ProfileModule,
     ProductReviewModule,
+    ProductCartsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
