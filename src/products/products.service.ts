@@ -54,9 +54,18 @@ export class ProductsService {
       },
       include: {
         category: true,
-        store: true,
+        store: {
+          include: {
+            storeAddress: true,
+          },
+        },
         reviews: true,
         productPictures: true,
+        orders: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
