@@ -41,6 +41,7 @@ export const stores = [
     phoneNumber: '081234349898',
     bank: 'bri',
     description: 'Deskripsi Toko Kita',
+    accountHolder: 'Budi Susanto',
     accountNumber: '111155553333',
     profilePicture: 'https://example.com/toko-kita.jpg',
   },

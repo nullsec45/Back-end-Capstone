@@ -8,7 +8,7 @@ import { compare, hash } from 'bcryptjs';
 
 @Injectable()
 export class ProfileService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
   async create(createProfileDto: CreateProfileDto) {
     const {
       userId,
@@ -16,7 +16,7 @@ export class ProfileService {
       profilePicture,
       gender,
       dateOfbirth,
-      phoneNumber
+      phoneNumber,
     } = createProfileDto;
 
     const iso8601Date = new Date(dateOfbirth).toISOString();
@@ -28,31 +28,26 @@ export class ProfileService {
         profilePicture,
         gender,
         dateOfbirth: iso8601Date,
-        phoneNumber
-      }
+        phoneNumber,
+      },
     });
   }
 
   async findOne(userId: string) {
     const dataProfile = await this.prisma.profile.findUnique({
       where: {
-        userId
-      }
+        userId,
+      },
     });
 
-    if (dataProfile === null) {
-      throw new ConflictCustomException(`profile ${userId} not found`);
-    } else {
-      return dataProfile;
-    }
-
+    return dataProfile;
   }
 
   async update(userId: string, updateProfileDto: UpdateProfileDto) {
     const dataProfile = await this.prisma.profile.findUnique({
       where: {
-        userId
-      }
+        userId,
+      },
     });
 
     if (dataProfile == null) {
@@ -63,12 +58,12 @@ export class ProfileService {
 
       return await this.prisma.profile.update({
         where: {
-          userId
+          userId,
         },
         data: {
           ...profile,
-          dateOfbirth: iso8601Date
-        }
+          dateOfbirth: iso8601Date,
+        },
       });
     }
   }
@@ -78,24 +73,26 @@ export class ProfileService {
 
     const selectOldPassword = await this.prisma.user.findFirst({
       select: {
-        password: true
+        password: true,
       },
       where: {
-        id: userId
-      }
+        id: userId,
+      },
     });
 
     if (await compare(oldPassword, selectOldPassword.password)) {
       await this.prisma.user.update({
         where: {
-          id: userId
+          id: userId,
         },
         data: {
-          password: await hash(newPassword, 10)
-        }
-      })
+          password: await hash(newPassword, 10),
+        },
+      });
     } else {
-      throw new ConflictCustomException('fail change password: please confirm the password again');
+      throw new ConflictCustomException(
+        'fail change password: please confirm the password again',
+      );
     }
   }
 }

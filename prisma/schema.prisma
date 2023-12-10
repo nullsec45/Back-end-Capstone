@@ -76,6 +76,7 @@ model Store {
   name            String    @unique
   phoneNumber     String
   bank            String
+  accountHolder   String  
   accountNumber   String    @unique
   description     String    @db.Text
   profilePicture  String
