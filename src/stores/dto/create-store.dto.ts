@@ -11,7 +11,7 @@ import { ApiProperty } from '@nestjs/swagger';
 class StoreAddress {
   @ApiProperty({
     example: 'Your Province',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -19,7 +19,7 @@ class StoreAddress {
 
   @ApiProperty({
     example: 'Your City',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -27,7 +27,7 @@ class StoreAddress {
 
   @ApiProperty({
     example: 'Your District',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -35,7 +35,7 @@ class StoreAddress {
 
   @ApiProperty({
     example: 'Your Sub District',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -43,7 +43,7 @@ class StoreAddress {
 
   @ApiProperty({
     example: 'Your Address',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -51,7 +51,7 @@ class StoreAddress {
 
   @ApiProperty({
     example: 'Your Postal Code',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -59,7 +59,7 @@ class StoreAddress {
 
   @ApiProperty({
     example: 'Your Lattitude',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -67,7 +67,7 @@ class StoreAddress {
 
   @ApiProperty({
     example: 'Your Longtitude',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -79,7 +79,7 @@ export class CreateStoreDto {
 
   @ApiProperty({
     example: 'Your Name Store',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @MaxLength(100)
@@ -87,7 +87,7 @@ export class CreateStoreDto {
 
   @ApiProperty({
     example: 'Phone Number Store (+62)',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -95,15 +95,23 @@ export class CreateStoreDto {
 
   @ApiProperty({
     example: 'Description Of Store',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
   description: string;
 
   @ApiProperty({
+    example: 'Account Holder',
+    required: true,
+  })
+  @IsNotEmpty()
+  @IsString()
+  accountHolder: string;
+
+  @ApiProperty({
     example: 'Account Number',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -111,7 +119,7 @@ export class CreateStoreDto {
 
   @ApiProperty({
     example: 'Your Bank',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -119,7 +127,7 @@ export class CreateStoreDto {
 
   @ApiProperty({
     example: 'profile-picutre-hash.(jpg|png|jpeg)',
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -127,7 +135,7 @@ export class CreateStoreDto {
 
   @ApiProperty({
     example: 'true | false',
-    required: false
+    required: false,
   })
   @IsBoolean()
   status: boolean;
