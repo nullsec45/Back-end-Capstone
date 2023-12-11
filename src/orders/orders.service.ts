@@ -224,16 +224,85 @@ export class OrdersService {
         );
     }
 
-    const updatedOrder = await this.prisma.order.update({
-      where: {
-        id: orderId,
-        userId,
-      },
-      data: {
-        status: 'CANCELLED',
-      },
-    });
+    const cancelOrderTransaction = () => {
+      return this.prisma.$transaction(async (tx) => {
+        // 1. Ubah status order ke CANCELLED
+        const updatedOrder = await tx.order.update({
+          where: {
+            id: orderId,
+            userId,
+          },
+          data: {
+            status: 'CANCELLED',
+          },
+          include: {
+            products: {
+              select: {
+                productId: true,
+                quantity: true,
+              },
+            },
+          },
+        });
 
+        // 2. Setelah Order CANCELLED, increment availableStock pada barang di order ini
+        for (const product of updatedOrder.products) {
+          await tx.product.update({
+            where: { id: product.productId },
+            data: {
+              availableStock: {
+                increment: product.quantity,
+              },
+            },
+          });
+        }
+
+        return updatedOrder;
+      });
+    };
+
+    const updatedOrder = await cancelOrderTransaction();
+    return updatedOrder;
+  }
+
+  async returnOrderById(orderId: string) {
+    const returnOrderTransaction = () => {
+      return this.prisma.$transaction(async (tx) => {
+        // 1. Ubah status order ke RETURNED
+        const updatedOrder = await tx.order.update({
+          where: {
+            id: orderId,
+          },
+          data: {
+            status: 'RETURNED',
+          },
+          include: {
+            products: {
+              select: {
+                productId: true,
+                quantity: true,
+              },
+            },
+          },
+        });
+
+        // 2. Setelah Order RETURNED, increment availableStock pada barang di order ini
+        for (const product of updatedOrder.products) {
+          await tx.product.update({
+            where: { id: product.productId },
+            data: {
+              availableStock: {
+                increment: product.quantity,
+              },
+            },
+          });
+        }
+
+        return updatedOrder;
+      });
+    };
+
+    const updatedOrder = await returnOrderTransaction();
     return updatedOrder;
   }
 }

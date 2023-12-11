@@ -19,7 +19,7 @@ import { ApiTags } from '@nestjs/swagger';
 @UseGuards(JwtAuthGuard)
 @Controller('orders')
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) { }
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
   async create(
@@ -81,6 +81,18 @@ export class OrdersController {
       data: order,
       statusCode: HttpStatus.OK,
       message: 'order successfully cancelled',
+    };
+  }
+
+  @Post(':id/return-order')
+  @HttpCode(HttpStatus.OK)
+  async returnOrder(@Param('id') orderId: string) {
+    const order = await this.ordersService.returnOrderById(orderId);
+
+    return {
+      data: order,
+      statusCode: HttpStatus.OK,
+      message: 'order successfully returned',
     };
   }
 }
