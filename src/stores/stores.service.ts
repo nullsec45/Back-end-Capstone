@@ -64,7 +64,7 @@ export class StoresService {
             transaction: true,
             products: {
               select: {
-                id: true,
+                productId: true,
                 price: true,
                 quantity: true,
                 rentFrom: true,

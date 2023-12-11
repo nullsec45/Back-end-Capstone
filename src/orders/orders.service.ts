@@ -224,16 +224,44 @@ export class OrdersService {
         );
     }
 
-    const updatedOrder = await this.prisma.order.update({
-      where: {
-        id: orderId,
-        userId,
-      },
-      data: {
-        status: 'CANCELLED',
-      },
-    });
+    const cancelOrderTransaction = () => {
+      return this.prisma.$transaction(async (tx) => {
+        // 1. Ubah status order ke CANCELLED
+        const updatedOrder = await tx.order.update({
+          where: {
+            id: orderId,
+            userId,
+          },
+          data: {
+            status: 'CANCELLED',
+          },
+          include: {
+            products: {
+              select: {
+                productId: true,
+                quantity: true,
+              },
+            },
+          },
+        });
 
+        // 2. Setelah Order CANCELLED, increment availableStock pada barang di order ini
+        for (const product of updatedOrder.products) {
+          await tx.product.update({
+            where: { id: product.productId },
+            data: {
+              availableStock: {
+                increment: product.quantity,
+              },
+            },
+          });
+        }
+
+        return updatedOrder;
+      });
+    };
+
+    const updatedOrder = await cancelOrderTransaction();
     return updatedOrder;
   }
 
@@ -251,34 +279,30 @@ export class OrdersService {
           include: {
             products: {
               select: {
-                id: true,
+                productId: true,
+                quantity: true,
               },
             },
           },
         });
 
-        // 2. Ambil id product yang ada di order ini
-        const productIds = updatedOrder.products.map((product) => product.id);
-
-        // 3. Setelah Order RETURNED, increment availableStock pada barang di order ini
-        const updatedProduct = await tx.product.updateMany({
-          where: {
-            id: {
-              in: productIds,
+        // 2. Setelah Order RETURNED, increment availableStock pada barang di order ini
+        for (const product of updatedOrder.products) {
+          await tx.product.update({
+            where: { id: product.productId },
+            data: {
+              availableStock: {
+                increment: product.quantity,
+              },
             },
-          },
-          data: {
-            availableStock: {
-              increment: 1,
-            },
-          },
-        });
+          });
+        }
 
-        return updatedProduct;
+        return updatedOrder;
       });
     };
 
-    const updatedProduct = await returnOrderTransaction();
-    return updatedProduct;
+    const updatedOrder = await returnOrderTransaction();
+    return updatedOrder;
   }
 }
