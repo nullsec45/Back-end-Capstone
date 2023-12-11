@@ -86,6 +86,7 @@ export class StoresService {
                 rating: true,
               },
             },
+            productPictures: true,
           },
         },
         storeAddress: true,

@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from '../prisma.service';
+import { UpdateProductStockDto } from './dto/update-product-stock.dto';
+import { UpdateProductPriceDto } from './dto/update-product-price.dto';
 
 @Injectable()
 export class ProductsService {
@@ -86,6 +88,77 @@ export class ProductsService {
             data: transformedProductPictures,
           },
         },
+      },
+    });
+  }
+
+  async updateStock(id: string, updateProductStockDto: UpdateProductStockDto) {
+    const { stock } = updateProductStockDto;
+
+    const updateStockTransaction = () => {
+      return this.prisma.$transaction(async (tx) => {
+        // 1. ambil produk sekarang dahulu untuk mengetahui stock saat ini
+        const currentProduct = await tx.product.findUnique({
+          where: { id },
+          select: {
+            id: true,
+            stock: true,
+          },
+        });
+
+        // 2. hitung penambahan availableStock sesuai dengan selisih antara stok sebelumya dan stock update dari request body
+        const totalOfStockToBeIncrementInAvailableStock =
+          stock - currentProduct.stock;
+
+        const updateQuery = {
+          where: { id },
+          data: {},
+          select: {
+            id: true,
+            stock: true,
+            availableStock: true,
+          },
+        };
+
+        // jika selisih nya positif (Stock brrti ditambah)
+        if (totalOfStockToBeIncrementInAvailableStock >= 0) {
+          updateQuery.data = {
+            stock,
+            availableStock: {
+              increment: totalOfStockToBeIncrementInAvailableStock,
+            },
+          };
+          // jika selisih nya negatif (Stock brrti dikurangi)
+        } else {
+          updateQuery.data = {
+            stock,
+            availableStock: {
+              decrement: totalOfStockToBeIncrementInAvailableStock * -1,
+            },
+          };
+        }
+
+        // 3. update stock dari request body
+        const updatedProduct = await tx.product.update(updateQuery);
+        return updatedProduct;
+      });
+    };
+
+    const updatedProduct = await updateStockTransaction();
+    return updatedProduct;
+  }
+
+  async updatePrice(id: string, updateProductPriceDto: UpdateProductPriceDto) {
+    const { price } = updateProductPriceDto;
+
+    return await this.prisma.product.update({
+      where: { id },
+      data: {
+        price,
+      },
+      select: {
+        id: true,
+        price: true,
       },
     });
   }
