@@ -59,8 +59,35 @@ export class StoresService {
         userId,
       },
       include: {
-        orders: true,
-        products: true,
+        orders: {
+          include: {
+            transaction: true,
+            products: {
+              select: {
+                id: true,
+                price: true,
+                quantity: true,
+                rentFrom: true,
+                rentTo: true,
+                subTotal: true,
+              },
+            },
+          },
+        },
+        products: {
+          include: {
+            orders: {
+              select: {
+                id: true,
+              },
+            },
+            reviews: {
+              select: {
+                rating: true,
+              },
+            },
+          },
+        },
         storeAddress: true,
       },
     });
