@@ -236,4 +236,49 @@ export class OrdersService {
 
     return updatedOrder;
   }
+
+  async returnOrderById(orderId: string) {
+    const returnOrderTransaction = () => {
+      return this.prisma.$transaction(async (tx) => {
+        // 1. Ubah status order ke RETURNED
+        const updatedOrder = await tx.order.update({
+          where: {
+            id: orderId,
+          },
+          data: {
+            status: 'RETURNED',
+          },
+          include: {
+            products: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        });
+
+        // 2. Ambil id product yang ada di order ini
+        const productIds = updatedOrder.products.map((product) => product.id);
+
+        // 3. Setelah Order RETURNED, increment availableStock pada barang di order ini
+        const updatedProduct = await tx.product.updateMany({
+          where: {
+            id: {
+              in: productIds,
+            },
+          },
+          data: {
+            availableStock: {
+              increment: 1,
+            },
+          },
+        });
+
+        return updatedProduct;
+      });
+    };
+
+    const updatedProduct = await returnOrderTransaction();
+    return updatedProduct;
+  }
 }
