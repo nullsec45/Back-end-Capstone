@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   HttpStatus,
+  HttpCode,
   UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
@@ -16,11 +17,13 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { AuthenticatedRequest } from 'typings';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { UpdateProductStockDto } from './dto/update-product-stock.dto';
+import { UpdateProductPriceDto } from './dto/update-product-price.dto';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -79,6 +82,50 @@ export class ProductsController {
       data: updatedProduct,
       statusCode: HttpStatus.OK,
       message: 'product sucessfully updated',
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/update-stock')
+  @HttpCode(HttpStatus.OK)
+  async updateStock(
+    @Param('id') id: string,
+    @Body() updateProductStockDto: UpdateProductStockDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+
+    const updatedProduct = await this.productsService.updateStock(
+      id,
+      updateProductStockDto,
+    );
+
+    return {
+      data: updatedProduct,
+      statusCode: HttpStatus.OK,
+      message: 'product stock sucessfully updated',
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/update-price')
+  @HttpCode(HttpStatus.OK)
+  async updatePrice(
+    @Param('id') id: string,
+    @Body() updateProductPriceDto: UpdateProductPriceDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+
+    const updatedProduct = await this.productsService.updatePrice(
+      id,
+      updateProductPriceDto,
+    );
+
+    return {
+      data: updatedProduct,
+      statusCode: HttpStatus.OK,
+      message: 'product price sucessfully updated',
     };
   }
 
