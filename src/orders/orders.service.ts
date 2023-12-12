@@ -175,7 +175,22 @@ export class OrdersService {
         userId,
       },
       include: {
-        products: true,
+        products: {
+          select: {
+            product: {
+              select: {
+                name: true,
+              },
+            },
+            productId: true,
+            price: true,
+            quantity: true,
+            rentFrom: true,
+            rentTo: true,
+            subTotal: true,
+          },
+        },
+        store: true,
         transaction: true,
         userAddress: true,
       },
@@ -199,7 +214,7 @@ export class OrdersService {
       } = order;
 
       const mappedProducts = order.products.map((product) => {
-        const { id, orderId, productId, ...rest } = product;
+        const { productId, ...rest } = product;
 
         return {
           id: productId,
