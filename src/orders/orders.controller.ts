@@ -68,6 +68,54 @@ export class OrdersController {
     };
   }
 
+  @Post(':id/process-order')
+  @HttpCode(HttpStatus.OK)
+  async processOrder(
+    @Param('id') orderId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+    const order = await this.ordersService.processOrderById(orderId);
+
+    return {
+      data: order,
+      statusCode: HttpStatus.OK,
+      message: 'order successfully processed',
+    };
+  }
+
+  @Post(':id/shipped-order')
+  @HttpCode(HttpStatus.OK)
+  async shippedOrder(
+    @Param('id') orderId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+    const order = await this.ordersService.shippedOrderById(orderId);
+
+    return {
+      data: order,
+      statusCode: HttpStatus.OK,
+      message: 'order successfully shipped',
+    };
+  }
+
+  @Post(':id/delivered-order')
+  @HttpCode(HttpStatus.OK)
+  async deliveredOrder(
+    @Param('id') orderId: string,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const userId = req.user.sub;
+    const order = await this.ordersService.deliveredOrderById(orderId);
+
+    return {
+      data: order,
+      statusCode: HttpStatus.OK,
+      message: 'order successfully delivered',
+    };
+  }
+
   @Post(':id/cancel-order')
   @HttpCode(HttpStatus.OK)
   async cancelOrder(
