@@ -125,7 +125,23 @@ export class OrdersService {
         userId,
       },
       include: {
+        store: true,
         transaction: true,
+        products: {
+          select: {
+            product: {
+              select: {
+                name: true,
+              },
+            },
+            productId: true,
+            price: true,
+            quantity: true,
+            rentFrom: true,
+            rentTo: true,
+            subTotal: true,
+          },
+        },
       },
     });
 
