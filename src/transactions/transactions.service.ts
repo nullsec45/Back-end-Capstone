@@ -49,7 +49,7 @@ export class TransactionsService {
         'you are not allowed to approve this payment proof. you are not the owner of this store',
       );
 
-    this.prisma.transaction.update({
+    return this.prisma.transaction.update({
       where: {
         id: transactionId,
       },
@@ -70,7 +70,7 @@ export class TransactionsService {
         'you are not allowed to reject this payment proof. you are not the owner of this store',
       );
 
-    this.prisma.transaction.update({
+    return this.prisma.transaction.update({
       where: {
         id: transactionId,
       },
