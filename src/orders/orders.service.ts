@@ -235,6 +235,39 @@ export class OrdersService {
     return mappedOrder;
   }
 
+  async processOrderById(orderId: string) {
+    const processedOrder = await this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: 'PROCESSING',
+      },
+    });
+
+    return processedOrder;
+  }
+
+  async shippedOrderById(orderId: string) {
+    const shippedOrder = await this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: 'SHIPPED',
+      },
+    });
+
+    return shippedOrder;
+  }
+
+  async deliveredOrderById(orderId: string) {
+    const deliveredOrder = await this.prisma.order.update({
+      where: { id: orderId },
+      data: {
+        status: 'DELIVERED',
+      },
+    });
+
+    return deliveredOrder;
+  }
+
   async cancelOrderById(orderId: string, userId: string) {
     const order = await this.findOne(orderId, userId);
 
