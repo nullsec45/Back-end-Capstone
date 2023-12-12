@@ -64,6 +64,11 @@ export class StoresService {
             transaction: true,
             products: {
               select: {
+                product: {
+                  select: {
+                    name: true,
+                  },
+                },
                 productId: true,
                 price: true,
                 quantity: true,
