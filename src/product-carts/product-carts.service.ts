@@ -6,40 +6,21 @@ import { ConflictCustomException } from '../../customExceptions/ConflictCustomEx
 
 @Injectable()
 export class ProductCartsService {
-  constructor(private readonly prisma: PrismaService) {
-
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createProductCartDto: CreateProductCartDto) {
-    const {
-      userId,
-      productId,
-      quantity,
-    } = createProductCartDto;
+    const { userId, productId, quantity } = createProductCartDto;
 
-    let cart = await this.prisma.cart.findUnique({
-      select: {
-        id: true
-      },
-      where: {
-        userId
-      }
-    })
-
-    if (!cart) {
-      cart = await this.prisma.cart.create({
-        data: {
-          userId
-        }
-      })
-    }
+    const cart = await this.prisma.cart.findFirst({
+      where: { userId },
+    });
 
     const productCarts = await this.prisma.productInCart.create({
       data: {
         productId,
         quantity,
-        cartId: cart.id
-      }
+        cartId: cart.id,
+      },
     });
 
     return productCarts;
@@ -48,32 +29,43 @@ export class ProductCartsService {
   async findAll(userId: string) {
     const cart = await this.prisma.cart.findUnique({
       select: {
-        id: true
+        id: true,
       },
       where: {
-        userId
-      }
-    })
+        userId,
+      },
+    });
 
     return await this.prisma.productInCart.findMany({
       include: {
-        product: true,
+        product: {
+          include: {
+            store: {
+              select: {
+                id: true,
+                name: true,
+                profilePicture: true,
+              },
+            },
+            productPictures: true,
+          },
+        },
       },
       where: {
-        cartId: cart.id
-      }
-    })
+        cartId: cart.id,
+      },
+    });
   }
 
   async findOne(id: string) {
     const dataProductCart = await this.prisma.productInCart.findUnique({
       where: {
-        id
+        id,
       },
       include: {
-        product: true
-      }
-    })
+        product: true,
+      },
+    });
 
     if (dataProductCart) {
       return dataProductCart;
@@ -85,9 +77,9 @@ export class ProductCartsService {
   async update(id: string, updateProductCartDto: UpdateProductCartDto) {
     const dataProductCart = await this.prisma.productInCart.findUnique({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
 
     if (!dataProductCart) {
       throw new ConflictCustomException('product cart not found');
@@ -97,12 +89,12 @@ export class ProductCartsService {
 
     const dataProduct = await this.prisma.product.findUnique({
       select: {
-        id: true
+        id: true,
       },
       where: {
-        id: productId
-      }
-    })
+        id: productId,
+      },
+    });
 
     if (!dataProduct) {
       throw new ConflictCustomException('product not found');
@@ -110,12 +102,12 @@ export class ProductCartsService {
 
     const updateProductCart = this.prisma.productInCart.update({
       where: {
-        id
+        id,
       },
       data: {
         productId,
-        quantity
-      }
+        quantity,
+      },
     });
 
     return updateProductCart;
@@ -125,12 +117,12 @@ export class ProductCartsService {
     const dataProductCart = await this.prisma.productInCart.findUnique({
       select: {
         id: true,
-        cartId: true
+        cartId: true,
       },
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
 
     if (!dataProductCart) {
       throw new ConflictCustomException('product cart not found');
@@ -138,21 +130,21 @@ export class ProductCartsService {
 
     const deleteProductCart = await this.prisma.productInCart.delete({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
 
     const dataProductCartByCartId = await this.prisma.productInCart.findMany({
       where: {
-        cartId: deleteProductCart.cartId
-      }
+        cartId: deleteProductCart.cartId,
+      },
     });
 
     if (dataProductCartByCartId.length === 0) {
       await this.prisma.cart.delete({
         where: {
-          id: dataProductCart.cartId
-        }
+          id: dataProductCart.cartId,
+        },
       });
     }
 

@@ -28,6 +28,13 @@ export class UsersService {
       },
     });
 
+    // Buatkan user cart secara otomatis
+    await this.prisma.cart.create({
+      data: {
+        userId: newUser.id,
+      },
+    });
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...data } = newUser;
 
