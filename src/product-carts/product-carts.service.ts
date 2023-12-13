@@ -9,7 +9,8 @@ export class ProductCartsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProductCartDto: CreateProductCartDto) {
-    const { userId, productId, quantity } = createProductCartDto;
+    const { userId, productId, quantity, rentFrom, rentTo } =
+      createProductCartDto;
 
     const cart = await this.prisma.cart.findFirst({
       where: { userId },
@@ -19,6 +20,8 @@ export class ProductCartsService {
       data: {
         productId,
         quantity,
+        rentFrom,
+        rentTo,
         cartId: cart.id,
       },
     });
@@ -85,7 +88,7 @@ export class ProductCartsService {
       throw new ConflictCustomException('product cart not found');
     }
 
-    const { productId, quantity } = updateProductCartDto;
+    const { productId, quantity, rentFrom, rentTo } = updateProductCartDto;
 
     const dataProduct = await this.prisma.product.findUnique({
       select: {
@@ -107,6 +110,8 @@ export class ProductCartsService {
       data: {
         productId,
         quantity,
+        rentFrom,
+        rentTo,
       },
     });
 
