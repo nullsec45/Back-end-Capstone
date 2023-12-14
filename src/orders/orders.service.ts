@@ -125,7 +125,11 @@ export class OrdersService {
         userId,
       },
       include: {
-        store: true,
+        store: {
+          include: {
+            storeAddress: true,
+          },
+        },
         transaction: true,
         products: {
           select: {
@@ -190,7 +194,11 @@ export class OrdersService {
             subTotal: true,
           },
         },
-        store: true,
+        store: {
+          include: {
+            storeAddress: true,
+          },
+        },
         transaction: true,
         userAddress: true,
       },
