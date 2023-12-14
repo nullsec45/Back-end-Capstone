@@ -146,6 +146,7 @@ export class OrdersService {
             subTotal: true,
           },
         },
+        userAddress: true,
       },
     });
 
