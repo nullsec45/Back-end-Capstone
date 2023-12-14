@@ -20,8 +20,6 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
 import { UpdateProductStockDto } from './dto/update-product-stock.dto';
 import { UpdateProductPriceDto } from './dto/update-product-price.dto';
-import { min } from 'class-validator';
-import { FILE } from 'dns';
 
 @ApiTags('products')
 @Controller('products')
