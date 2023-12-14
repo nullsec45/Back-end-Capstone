@@ -17,6 +17,7 @@ enum ShippingMethod {
 
 enum PaymentMethod {
   TRANSFER = 'TRANSFER',
+  COD = 'COD',
 }
 
 class ProductDto {
