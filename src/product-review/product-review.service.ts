@@ -30,16 +30,12 @@ export class ProductReviewService {
   }
 
   async findAll(productId: string) {
-    const dataReview = await this.prisma.review.findMany({
+    const reviews = await this.prisma.review.findMany({
       where: {
         productId,
       },
       include: {
         user: {
-          select: {
-            id: true,
-            username: true,
-          },
           include: {
             profile: {
               select: {
@@ -51,7 +47,20 @@ export class ProductReviewService {
       },
     });
 
-    return dataReview;
+    const mappedReviews = reviews.map((review) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { email, password, createdAt, updatedAt, ...restUser } =
+        review.user;
+
+      return {
+        ...review,
+        user: {
+          ...restUser,
+        },
+      };
+    });
+
+    return mappedReviews;
   }
 
   async findOne(productId: string, id: string) {
