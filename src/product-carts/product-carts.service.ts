@@ -3,6 +3,7 @@ import { CreateProductCartDto } from './dto/create-product-cart.dto';
 import { UpdateProductCartDto } from './dto/update-product-cart.dto';
 import { PrismaService } from '../prisma.service';
 import { ConflictCustomException } from '../../customExceptions/ConflictCustomException';
+import { NotFoundCustomException } from '../../customExceptions/NotFoundCustomException';
 
 @Injectable()
 export class ProductCartsService {
@@ -139,20 +140,24 @@ export class ProductCartsService {
       },
     });
 
-    const dataProductCartByCartId = await this.prisma.productInCart.findMany({
+    return deleteProductCart;
+  }
+
+  async emptyMyCart(userId: string) {
+    const myCart = await this.prisma.cart.findFirst({
+      where: { userId },
+    });
+
+    if (!myCart) {
+      throw new NotFoundCustomException('cart not found');
+    }
+
+    const deletedProductsInCart = await this.prisma.productInCart.deleteMany({
       where: {
-        cartId: deleteProductCart.cartId,
+        cartId: myCart.id,
       },
     });
 
-    if (dataProductCartByCartId.length === 0) {
-      await this.prisma.cart.delete({
-        where: {
-          id: dataProductCart.cartId,
-        },
-      });
-    }
-
-    return deleteProductCart;
+    return deletedProductsInCart;
   }
 }
