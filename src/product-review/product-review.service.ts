@@ -40,6 +40,13 @@ export class ProductReviewService {
             id: true,
             username: true,
           },
+          include: {
+            profile: {
+              select: {
+                profilePicture: true,
+              },
+            },
+          },
         },
       },
     });
