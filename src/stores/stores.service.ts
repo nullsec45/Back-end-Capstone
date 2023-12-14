@@ -61,6 +61,7 @@ export class StoresService {
       include: {
         orders: {
           include: {
+            userAddress: true,
             transaction: true,
             products: {
               select: {
