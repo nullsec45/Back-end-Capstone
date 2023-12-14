@@ -10,6 +10,7 @@ import {
   HttpStatus,
   HttpCode,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -23,7 +24,7 @@ import { UpdateProductPriceDto } from './dto/update-product-price.dto';
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -54,6 +55,36 @@ export class ProductsController {
     };
   }
 
+  @Get('filter')
+  async findByFilter(@Query() query: any) {
+    const {
+      keyword = "",
+      category = "",
+      minPrice = "",
+      maxPrice = "",
+      city = "",
+      province = ""
+    } = query;
+
+    const filter = {
+      keyword,
+      category,
+      minPrice,
+      maxPrice,
+      city,
+      province
+    }
+
+    const products = await this.productsService.findByFilter(filter);
+    return {
+      data: products,
+      statusCode: HttpStatus.OK,
+      meta: {
+        totalItems: products.length,
+      },
+    };
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const product = await this.productsService.findOne(id);
@@ -68,11 +99,8 @@ export class ProductsController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
-    @Req() req: AuthenticatedRequest,
+    @Body() updateProductDto: UpdateProductDto
   ) {
-    const userId = req.user.sub;
-
     const updatedProduct = await this.productsService.update(
       id,
       updateProductDto,
