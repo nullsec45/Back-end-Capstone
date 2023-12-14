@@ -7,7 +7,7 @@ import { UpdateProductPriceDto } from './dto/update-product-price.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createProductDto: CreateProductDto) {
     const { productPictures, ...product } = createProductDto;
@@ -46,6 +46,78 @@ export class ProductsService {
           },
         },
       },
+    });
+  }
+
+  async findByFilter(filter: any) {
+    const {
+      keyword,
+      category,
+      minPrice,
+      maxPrice,
+      city,
+      province
+    } = filter;
+
+    let where: any = {}
+
+    if (keyword) {
+      where.name = {
+        contains: keyword
+      }
+    }
+
+    if (category) {
+      where.categoryId = category;
+    }
+
+    if (minPrice) {
+      where.price = {
+        gte: parseFloat(minPrice)
+      }
+    }
+
+    if (maxPrice) {
+      where.price = {
+        lte: maxPrice
+      }
+    }
+
+    if (province) {
+      where.store = {
+        storeAddress: {
+          province: province.replace("-", " ")
+        }
+      }
+    }
+
+    if (city) {
+      where.store = {
+        storeAddress: {
+          city: city.replace("-", " ")
+        }
+      }
+    }
+
+    return await this.prisma.product.findMany({
+      where,
+      include: {
+        productPictures: true,
+        store: {
+          select: {
+            id: true,
+            name: true,
+            profilePicture: true,
+            verified: true,
+            storeAddress: {
+              select: {
+                city: true,
+                district: true
+              },
+            },
+          },
+        },
+      }
     });
   }
 
