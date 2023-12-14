@@ -84,17 +84,6 @@ export class ProductCartsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    await this.productCartsService.remove(id);
-
-    return {
-      statusCode: 200,
-      message: 'successfully delete product cart',
-    };
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Delete('empty-my-cart')
   async emptyMyCart(@Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
@@ -104,6 +93,17 @@ export class ProductCartsController {
     return {
       statusCode: 200,
       message: 'successfully empty your products in cart',
+    };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    await this.productCartsService.remove(id);
+
+    return {
+      statusCode: 200,
+      message: 'successfully delete product cart',
     };
   }
 }
