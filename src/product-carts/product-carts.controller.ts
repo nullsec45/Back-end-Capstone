@@ -93,4 +93,17 @@ export class ProductCartsController {
       message: 'successfully delete product cart',
     };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('empty-my-cart')
+  async emptyMyCart(@Req() req: AuthenticatedRequest) {
+    const userId = req.user.sub;
+
+    await this.productCartsService.emptyMyCart(userId);
+
+    return {
+      statusCode: 200,
+      message: 'successfully empty your products in cart',
+    };
+  }
 }
