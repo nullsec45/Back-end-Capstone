@@ -123,6 +123,12 @@ export class ProductsService {
             },
           },
         },
+        reviews: {
+          select: {
+            id: true,
+            rating: true,
+          },
+        },
       },
     });
   }
