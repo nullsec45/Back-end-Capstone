@@ -79,22 +79,28 @@ export class ProductsService {
 
     if (maxPrice) {
       where.price = {
-        lte: maxPrice
+        lte: parseFloat(maxPrice)
       }
     }
 
     if (province) {
+      let provinceKeyword = province.replace("-", " ");
+      provinceKeyword = provinceKeyword.charAt(0).toUpperCase() + provinceKeyword.slice(1);
+
       where.store = {
         storeAddress: {
-          province: province.replace("-", " ")
+          province: provinceKeyword
         }
       }
     }
 
     if (city) {
+      let cityKeyword = city.replace("-", " ");
+      cityKeyword = cityKeyword.charAt(0).toUpperCase() + cityKeyword.slice(1);
+
       where.store = {
         storeAddress: {
-          city: city.replace("-", " ")
+          city: cityKeyword
         }
       }
     }
@@ -111,8 +117,8 @@ export class ProductsService {
             verified: true,
             storeAddress: {
               select: {
-                city: true,
-                district: true
+                province: true,
+                city: true
               },
             },
           },
