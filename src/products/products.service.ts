@@ -7,7 +7,7 @@ import { UpdateProductPriceDto } from './dto/update-product-price.dto';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto) {
     const { productPictures, ...product } = createProductDto;
@@ -45,26 +45,25 @@ export class ProductsService {
             },
           },
         },
+        reviews: {
+          select: {
+            id: true,
+            rating: true,
+          },
+        },
       },
     });
   }
 
   async findByFilter(filter: any) {
-    const {
-      keyword,
-      category,
-      minPrice,
-      maxPrice,
-      city,
-      province
-    } = filter;
+    const { keyword, category, minPrice, maxPrice, city, province } = filter;
 
-    let where: any = {}
+    let where: any = {};
 
     if (keyword) {
       where.name = {
-        contains: keyword
-      }
+        contains: keyword,
+      };
     }
 
     if (category) {
@@ -73,36 +72,37 @@ export class ProductsService {
 
     if (minPrice) {
       where.price = {
-        gte: parseFloat(minPrice)
-      }
+        gte: parseFloat(minPrice),
+      };
     }
 
     if (maxPrice) {
       where.price = {
-        lte: parseFloat(maxPrice)
-      }
+        lte: parseFloat(maxPrice),
+      };
     }
 
     if (province) {
-      let provinceKeyword = province.replace("-", " ");
-      provinceKeyword = provinceKeyword.charAt(0).toUpperCase() + provinceKeyword.slice(1);
+      let provinceKeyword = province.replace('-', ' ');
+      provinceKeyword =
+        provinceKeyword.charAt(0).toUpperCase() + provinceKeyword.slice(1);
 
       where.store = {
         storeAddress: {
-          province: provinceKeyword
-        }
-      }
+          province: provinceKeyword,
+        },
+      };
     }
 
     if (city) {
-      let cityKeyword = city.replace("-", " ");
+      let cityKeyword = city.replace('-', ' ');
       cityKeyword = cityKeyword.charAt(0).toUpperCase() + cityKeyword.slice(1);
 
       where.store = {
         storeAddress: {
-          city: cityKeyword
-        }
-      }
+          city: cityKeyword,
+        },
+      };
     }
 
     return await this.prisma.product.findMany({
@@ -118,12 +118,12 @@ export class ProductsService {
             storeAddress: {
               select: {
                 province: true,
-                city: true
+                city: true,
               },
             },
           },
         },
-      }
+      },
     });
   }
 
