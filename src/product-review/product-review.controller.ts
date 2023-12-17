@@ -15,7 +15,12 @@ import { CreateProductReviewDto } from './dto/create-product-review.dto';
 import { UpdateProductReviewDto } from './dto/update-product-review.dto';
 import { AuthenticatedRequest } from 'typings';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse
+} from '@nestjs/swagger';
 
 @ApiTags('product reviews')
 @Controller('products')
@@ -24,8 +29,21 @@ export class ProductReviewController {
     private readonly productReviewService: ProductReviewService
   ) { }
 
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    description: 'request body post product reciew',
+    type: CreateProductReviewDto
+  })
   @Post(':productId/reviews')
+  @ApiResponse({
+    status: 201,
+    description: 'user successfully review',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'user already review',
+  })
   async create(
     @Param('productId') productId: string,
     @Body() createProductReviewDto: CreateProductReviewDto,
@@ -47,6 +65,10 @@ export class ProductReviewController {
   }
 
   @Get(':productId/reviews')
+  @ApiResponse({
+    status: 200,
+    description: 'data all reviews product',
+  })
   async findAll(@Param('productId') productId: string) {
     const reviews = await this.productReviewService.findAll(productId);
     return {
@@ -57,6 +79,14 @@ export class ProductReviewController {
   }
 
   @Get(':productId/reviews/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'data detail review',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'review not found',
+  })
   async findOne(@Param('productId') productId: string, @Param('id') id: string) {
     const dataReview = await this.productReviewService.findOne(productId, id);
     return {
@@ -65,7 +95,20 @@ export class ProductReviewController {
     }
   }
 
+  @ApiBody({
+    description: 'request body patch product reciew',
+    type: CreateProductReviewDto
+  })
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'review successfully update',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'review not found',
+  })
   @Patch(':productId/reviews/:id')
   async update(@Param('productId') productId: string, @Param('id') id: string, @Body() updateProductReviewDto: UpdateProductReviewDto) {
     const dataReview = await this.productReviewService.update(productId, id, updateProductReviewDto);
@@ -77,8 +120,17 @@ export class ProductReviewController {
     }
   }
 
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard)
   @Delete(':productId/reviews/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'review successfully delete',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'review not found',
+  })
   async remove(@Param('productId') productId: string, @Param('id') id: string) {
     await this.productReviewService.remove(productId, id);
 

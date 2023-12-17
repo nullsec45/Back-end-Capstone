@@ -43,7 +43,7 @@ export class CategoriesService {
       };
     }
 
-    throw new ConflictCustomException('category tidak ditemukan!');
+    throw new ConflictCustomException('category not found!');
 
   }
 

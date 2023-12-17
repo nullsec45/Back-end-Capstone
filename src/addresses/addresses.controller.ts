@@ -15,15 +15,29 @@ import { CreateAddressDto } from './dto/create-address.dto';
 import { UpdateAddressDto } from './dto/update-address.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { AuthenticatedRequest } from '../../typings';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiResponse,
+  ApiBody,
+  ApiUnauthorizedResponse
+} from '@nestjs/swagger';
 
 @ApiTags('addresses')
+@ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
 @UseGuards(JwtAuthGuard)
 @Controller('addresses')
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) { }
 
+  @ApiBody({
+    description: 'request body post address',
+    type: CreateAddressDto
+  })
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'address successfully created',
+  })
   async create(
     @Body() createAddressDto: CreateAddressDto,
     @Req() req: AuthenticatedRequest,
@@ -43,6 +57,10 @@ export class AddressesController {
   }
 
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'data all address by user',
+  })
   async findAll(@Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
     const addresses = await this.addressesService.findAll(userId);
@@ -57,6 +75,14 @@ export class AddressesController {
   }
 
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'data detail address by user',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'address not found',
+  })
   async findOne(
     @Param('id') addressId: string,
     @Req() req: AuthenticatedRequest,
@@ -71,7 +97,19 @@ export class AddressesController {
     };
   }
 
+  @ApiBody({
+    description: 'request body patch address',
+    type: CreateAddressDto
+  })
   @Patch(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'address successfully updated',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'you are not allowed to delete this data',
+  })
   async update(
     @Param('id') addressId: string,
     @Body() updateAddressDto: UpdateAddressDto,
@@ -93,6 +131,14 @@ export class AddressesController {
   }
 
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'address successfully deleted',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'address not found',
+  })
   async remove(
     @Param('id') addressId: string,
     @Req() req: AuthenticatedRequest,
