@@ -15,15 +15,29 @@ import { CreateProductCartDto } from './dto/create-product-cart.dto';
 import { UpdateProductCartDto } from './dto/update-product-cart.dto';
 import { AuthenticatedRequest } from 'typings';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse
+} from '@nestjs/swagger';
 
 @ApiTags('product carts')
+@ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+@UseGuards(JwtAuthGuard)
 @Controller('product-carts')
 export class ProductCartsController {
-  constructor(private readonly productCartsService: ProductCartsService) {}
+  constructor(private readonly productCartsService: ProductCartsService) { }
 
-  @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    description: 'request body post product cart',
+    type: CreateProductCartDto
+  })
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'successfully created carts',
+  })
   async create(
     @Body() createProductCartDto: CreateProductCartDto,
     @Req() req: AuthenticatedRequest,
@@ -42,8 +56,11 @@ export class ProductCartsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'data all product carts',
+  })
   async findAll(@Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
     const dataProductCart = await this.productCartsService.findAll(userId);
@@ -54,8 +71,15 @@ export class ProductCartsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'data detail product cart',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'product cart not found',
+  })
   async findOne(@Param('id') id: string) {
     const dataProductCart = await this.productCartsService.findOne(id);
 
@@ -65,8 +89,19 @@ export class ProductCartsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    description: 'request body patch product cart',
+    type: CreateProductCartDto
+  })
   @Patch(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'detail profile',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'product cart not found',
+  })
   async update(
     @Param('id') id: string,
     @Body() updateProductCartDto: UpdateProductCartDto,
@@ -83,8 +118,15 @@ export class ProductCartsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete('empty-my-cart')
+  @ApiResponse({
+    status: 200,
+    description: 'successfully empty your products in cart'
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'product cart not found',
+  })
   async emptyMyCart(@Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
 
@@ -96,7 +138,6 @@ export class ProductCartsController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     await this.productCartsService.remove(id);
