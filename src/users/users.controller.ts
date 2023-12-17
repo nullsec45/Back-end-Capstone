@@ -15,15 +15,24 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { AuthenticatedRequest } from '../../typings';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiUnauthorizedResponse,
+  ApiResponse
+} from '@nestjs/swagger';
 
 @ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard)
   @Get('my-store')
+  @ApiResponse({
+    status: 200,
+    description: 'data my store'
+  })
   async getMyStore(@Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
 
