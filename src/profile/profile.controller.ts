@@ -15,15 +15,29 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { AuthenticatedRequest } from 'typings';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse
+} from '@nestjs/swagger';
 
 @ApiTags('profiles')
+@UseGuards(JwtAuthGuard)
+@ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
 @Controller('profiles')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) { }
 
-  @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    description: 'request body post profile',
+    type: CreateProfileDto
+  })
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'profile successfully created',
+  })
   async create(
     @Body() createProfileDto: CreateProfileDto,
     @Req() req: AuthenticatedRequest) {
@@ -41,8 +55,11 @@ export class ProfileController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('me')
+  @ApiResponse({
+    status: 201,
+    description: 'detail profile',
+  })
   async findOne(@Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
     const dataProfile = await this.profileService.findOne(userId);
@@ -53,8 +70,19 @@ export class ProfileController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    description: 'request body patch profile',
+    type: CreateProfileDto
+  })
   @Patch()
+  @ApiResponse({
+    status: 409,
+    description: 'profile <user_id> not found',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'profile successfully update',
+  })
   async update(@Req() req: AuthenticatedRequest, @Body() updateProfileDto: UpdateProfileDto) {
     const userId = req.user.sub;
 
@@ -63,12 +91,23 @@ export class ProfileController {
     return {
       data: updateProfile,
       statusCode: HttpStatus.OK,
-      message: 'review successfully update'
+      message: 'profile successfully update'
     }
   }
 
-  @UseGuards(JwtAuthGuard)
+  @ApiBody({
+    description: 'request body change password',
+    type: ChangePasswordDto
+  })
   @Patch('change-password')
+  @ApiResponse({
+    status: 200,
+    description: 'successfully change password',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'fail change password: please confirm the password again',
+  })
   async changePassword(@Req() req: AuthenticatedRequest, @Body() changePasswordDto: ChangePasswordDto) {
     const userId = req.user.sub;
 
