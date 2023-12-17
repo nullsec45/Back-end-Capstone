@@ -13,15 +13,29 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { AuthenticatedRequest } from '../../typings';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiUnauthorizedResponse,
+  ApiResponse,
+  ApiBody
+} from '@nestjs/swagger';
 
 @ApiTags('orders')
+@ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
 @UseGuards(JwtAuthGuard)
 @Controller('orders')
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(private readonly ordersService: OrdersService) { }
 
+  @ApiBody({
+    description: 'request body post order product',
+    type: CreateOrderDto
+  })
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'order successfully created',
+  })
   async create(
     @Body() createOrderDto: CreateOrderDto,
     @Req() req: AuthenticatedRequest,
@@ -41,6 +55,10 @@ export class OrdersController {
   }
 
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'data all orders',
+  })
   async findAll(@Req() req: AuthenticatedRequest) {
     const userId = req.user.sub;
     const orders = await this.ordersService.findAll(userId);
@@ -55,6 +73,10 @@ export class OrdersController {
   }
 
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'data detail order',
+  })
   async findOne(
     @Param('id') orderId: string,
     @Req() req: AuthenticatedRequest,
@@ -69,6 +91,10 @@ export class OrdersController {
   }
 
   @Post(':id/process-order')
+  @ApiResponse({
+    status: 200,
+    description: 'order successfully processed',
+  })
   @HttpCode(HttpStatus.OK)
   async processOrder(
     @Param('id') orderId: string,
@@ -85,6 +111,10 @@ export class OrdersController {
   }
 
   @Post(':id/shipped-order')
+  @ApiResponse({
+    status: 200,
+    description: 'order successfully shipped',
+  })
   @HttpCode(HttpStatus.OK)
   async shippedOrder(
     @Param('id') orderId: string,
@@ -101,6 +131,10 @@ export class OrdersController {
   }
 
   @Post(':id/delivered-order')
+  @ApiResponse({
+    status: 200,
+    description: 'order successfully delivered',
+  })
   @HttpCode(HttpStatus.OK)
   async deliveredOrder(
     @Param('id') orderId: string,
@@ -117,6 +151,10 @@ export class OrdersController {
   }
 
   @Post(':id/cancel-order')
+  @ApiResponse({
+    status: 200,
+    description: 'order successfully cancelled',
+  })
   @HttpCode(HttpStatus.OK)
   async cancelOrder(
     @Param('id') orderId: string,
@@ -133,6 +171,10 @@ export class OrdersController {
   }
 
   @Post(':id/return-order')
+  @ApiResponse({
+    status: 200,
+    description: 'order successfully returned',
+  })
   @HttpCode(HttpStatus.OK)
   async returnOrder(@Param('id') orderId: string) {
     const order = await this.ordersService.returnOrderById(orderId);

@@ -123,6 +123,7 @@ export class StoresController {
     };
   }
 
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiResponse({
@@ -130,6 +131,8 @@ export class StoresController {
     description: 'store successfully deleted'
   })
 
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @UseGuards(JwtAuthGuard)
   async remove(@Param('id') id: string, @Req() req: AuthenticatedRequest) {
     await this.storesService.remove(id);
 

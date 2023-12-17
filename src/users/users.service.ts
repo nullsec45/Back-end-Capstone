@@ -11,7 +11,7 @@ export class UsersService {
   constructor(
     private prisma: PrismaService,
     private storesService: StoresService,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
     const isEmailExist = await this.findByEmail(createUserDto.email);
@@ -41,9 +41,9 @@ export class UsersService {
     return data;
   }
 
-  findAll() {
-    return `This action returns all user`;
-  }
+  // findAll() {
+  //   return `This action returns all user`;
+  // }
 
   async findOne(id: string) {
     const user = await this.prisma.user.findUnique({
