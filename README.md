@@ -1,73 +1,67 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+<h2 align="center">Backend Repository <br> Platform Penyewaan Barang</h2>
+<h3>TEAM ID       :  C523-PS029</h3>
+<h3>TEMA			    : Teknologi dalam Berbagai Aspek Kehidupan </h3>
+<h3>NAMA ADVISOR	: Buchori Rafsanjani </h3>
+<h3>LIST ANGGOTA	: </h3>
+<ol>
+  <li>S182XB441 – Astriditiya Laila Nur Fadilah - Aktif</li>
+  <li>F498YB197 – Abdul Rizki Maghribi - Aktif</li>
+  <li>F265YB190 – Dimas Fauzan - Aktif</li>
+  <li>F193YB217 – Muhammad Dariaz Zidane - Aktif</li>
+  <li>F156YB169 – Rama Fajar Fadhillah - Aktif</li>
+</ol>
+<h3>Nama Project : Ezrent</h3>
+<h3>LINK BACKEND : <a href="https://api.ezrent.my.id/">api.ezrent.my.id</a> </h3>
+<h2 align="left">Apa itu ezrent ?</h2>
+<p align="justify">Ezrent adalah platform penyewaan barang berbasis website yang dapat digunakan untuk transaksi penyewaan barang. Pengguna dapat menyewa barang dengan rentang hari tertentu. Barang yang terdapat pun beragam, terdapat barang elektronik, otomatif, aksesoris, dan lainnya. Selain menyewa barang, pengguana pun dapat menyewakan barang yang ia miliki dengan cara membuka toko. Demi kenyamanan dan keamanan sebelum menyewa barang pengguna harus melengkapi data pribadai seperti KTP, SIM, atau Pasport.</p>
+<h2 align="left">Tech Stack</h2>
+
+|      Nama             |             Link                            | 
+| --------------------- |:-------------------------------------------:| 
+| Typescript            | https://www.typescriptlang.org              | 
+| Mysql                 | https://www.mysql.com                       |  
+| Docker                | https://www.docker.com                      |  
+| Prisma ORM            | https://www.prisma.io                       |  
+| Passport              | https://www.passportjs.org/                 |  
+|JWT (Json Web Token)   | https://jwt.io                              |    
+| Prisma ORM            | https://www.prisma.io                       |  
+| Nginx                 | https://www.nginx.com/                      | 
+| Lets Enscrypt         | https://letsencrypt.org/                    | 
+| Nest JS Open API      |https://docs.nestjs.com/openapi/introduction | 
+<h2 align="left">Development</h2>
+<p align="left">
+  Clone Repository ini<br> 
+    
+    $ git clone https://github.com/nullsec45/Back-end-Capstone
+</p>
+<p align="left">
+  Install dependencies : <br> 
+    
+    $ npm install
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+<p align="left">
+  Ubah .env.example menjadi .env : <br> 
+    
+    $ mv .env.example .env
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+<p align="left">
+  Ubah isi .env sesuai environment anda *sebagai contoh: 
+  <br>
+    
+    # DATABASE
+    DATABASE_URL="mysql://root@localhost:3306/ezrent"
+    
+    # JWT
+    JWT_SECRET="secret_jwt_ezrent"
+</p>
+<p align="left">
+  Jalankan Migrate Database : <br> 
+    
+    $ npx prisma generate dev
+</p>
+<p align="left">
+  Jalankan Program Ke Mode Development : <br> 
+    
+    $ npm run start:dev
+</p>
