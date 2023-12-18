@@ -30,50 +30,38 @@
 | Nest JS Open API      |https://docs.nestjs.com/openapi/introduction | 
 <h2 align="left">Development</h2>
 <p align="left">
-  Clone Repository ini<br>
-  <code> 
+  Clone Repository ini<br> 
     
     $ git clone https://github.com/nullsec45/Back-end-Capstone
-  </code>
 </p>
 <p align="left">
-  Install dependencies : <br>
-  <code> 
+  Install dependencies : <br> 
     
     $ npm install
-  </code>
 </p>
 
 <p align="left">
-  Ubah .env.example menjadi .env : <br>
-  <code> 
+  Ubah .env.example menjadi .env : <br> 
     
     $ mv .env.example .env
-  </code>
 </p>
 <p align="left">
   Ubah isi .env sesuai environment anda *sebagai contoh: 
   <br>
-  <code>
     
     # DATABASE
     DATABASE_URL="mysql://root@localhost:3306/ezrent"
     
     # JWT
     JWT_SECRET="secret_jwt_ezrent"
-  </code>
 </p>
 <p align="left">
-  Jalankan Migrate Database : <br>
-  <code> 
+  Jalankan Migrate Database : <br> 
     
     $ npx prisma generate dev
-  </code>
 </p>
 <p align="left">
-  Jalankan Program Ke Mode Development : <br>
-  <code> 
+  Jalankan Program Ke Mode Development : <br> 
     
     $ npm run start:dev
-  </code>
 </p>
