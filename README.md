@@ -13,7 +13,7 @@
 <h3>Nama Project : Ezrent</h3>
 <h3>LINK BACKEND : <a href="https://api.ezrent.my.id/">api.ezrent.my.id</a> </h3>
 <h2 align="left">Apa itu ezrent ?</h2>
-<p align="justify">Ezrent adalah platform penyewaan barang berbasis website yang dapat digunakan untuk transaksi penyewaan barang. Pengguna dapat menyewa barang dengan rentang hari tertentu. Barang yang terdapat pun beragam, terdapat barang elektronik, otomatif, aksesoris, dan lainnya. Selain menyewa barang, pengguana pun dapat menyewakan barang yang ia miliki dengan cara membuka toko. Demi kenyamanan dan keamanan sebelum menyewa barang pengguna harus melengkapi data pribadai seperti KTP, SIM, atau Pasport.</p>
+<p align="justify">Ezrent adalah platform penyewaan barang berbasis website yang dapat digunakan untuk transaksi penyewaan barang. Pengguna dapat menyewa barang dengan rentang hari tertentu. Barang yang terdapat pun beragam, terdapat barang elektronik, properti, dan lainnya. Selain menyewa barang, pengguna pun dapat menyewakan barang yang ia miliki dengan cara membuka toko.</p>
 <h2 align="left">Tech Stack</h2>
 
 |      Nama             |             Link                            | 
