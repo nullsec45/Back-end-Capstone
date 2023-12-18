@@ -1,0 +1,263 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  profile         Profile?
+  store           Store?
+  reviews         Review[]
+  orders          Order[]
+  userAddress     UserAddress[]
+  cart            Cart?
+  email           String    @unique
+  username        String    @unique
+  password        String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Profile {
+  id              String    @id @default(uuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique // 1-1 relation
+  fullname        String?
+  profilePicture  String?
+  gender          Gender
+  dateOfbirth     DateTime? @db.Date
+  phoneNumber     String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("profiles")
+}
+
+model UserAddress {
+  id              String    @id @default(uuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    // 1-n relation
+  orders          Order[]
+  label           String
+  recipientName   String
+  phoneNumber     String
+  province        String
+  city            String
+  district        String
+  subDistrict     String
+  fullAddress     String
+  postalCode      String
+  latitude        String
+  longitude       String
+  deleted         Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("user_addresses")
+}
+
+model Store {
+  id              String    @id @default(uuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique // 1-1
+  storeAddress    StoreAddress?
+  products        Product[]
+  orders          Order[]
+  name            String    @unique
+  phoneNumber     String
+  bank            String
+  accountHolder   String  
+  accountNumber   String    @unique
+  description     String    @db.Text
+  profilePicture  String
+  status          Boolean   @default(false)
+  verified        Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("stores")
+}
+
+
+model StoreAddress {
+  id              String    @id @default(uuid())
+  store           Store     @relation(fields: [storeId], references: [id])
+  storeId         String    @unique // 1-1 relation
+  province        String
+  city            String
+  district        String
+  subDistrict     String
+  fullAddress     String
+  postalCode      String
+  latitude        String
+  longitude       String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("store_addresses")
+}
+
+model Product {
+  id              String    @id @default(uuid())
+  category        Category  @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  store           Store     @relation(fields: [storeId], references: [id])
+  storeId         String      
+  reviews         Review[]
+  productPictures ProductPicture[]
+  orders          OrderDetail[]
+  carts           ProductInCart[]
+  name            String    
+  description     String    @db.Text
+  price           Float     @db.Double
+  maximumRental   Int
+  stock           Int
+  availableStock  Int
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("products")
+}
+
+model Category {
+  id              String    @id @default(uuid())
+  products        Product[]
+  name            String  @unique
+  description     String?   @db.Text
+  
+  @@map("categories")
+}
+
+model Review {
+  id              String    @id @default(uuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique
+  product         Product   @relation(fields: [productId], references: [id])
+  productId       String    @unique
+  rating          Int 
+  comment         String    @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("reviews")
+}
+
+model ProductPicture {
+  id              String    @id @default(uuid())
+  url             String
+  product         Product   @relation(fields: [productId], references: [id])
+  productId       String
+  
+  @@map("product_pictures")
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  user            User          @relation(fields: [userId], references: [id])
+  userId          String  
+  userAddress     UserAddress   @relation(fields: [userAddressId], references: [id])
+  userAddressId   String
+  store           Store         @relation(fields: [storeId], references: [id])
+  storeId         String
+  products        OrderDetail[]
+  transaction     Transaction?
+  totalAmount     Float         @db.Double
+  status          OrderStatus 
+  shipping        ShippingMethod
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@map("orders")
+}
+
+model OrderDetail {
+  id              String    @id @default(uuid())
+  order           Order     @relation(fields: [orderId], references: [id])
+  orderId         String    
+  product         Product   @relation(fields: [productId], references: [id])
+  productId       String
+  quantity        Int
+  price           Float     @db.Double
+  subTotal        Float     @db.Double
+  rentFrom        DateTime
+  rentTo          DateTime
+  
+  @@map("order_details")
+}
+
+model Transaction {
+  id              String    @id @default(uuid())
+  order           Order     @relation(fields: [orderId], references: [id])
+  orderId         String    @unique
+  paymentMethod   PaymentMethod
+  paymentProof    String?
+  status          TransactionStatus
+  transactionAmount Float?   @db.Double
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("transactions")
+}
+
+model Cart {
+  id              String    @id @default(uuid())
+  user            User      @relation(fields: [userId], references: [id])
+  userId          String    @unique
+  products        ProductInCart[]
+  
+  @@map("carts")
+}
+
+model ProductInCart {
+  id              String    @id @default(uuid())
+  product         Product   @relation(fields: [productId], references: [id])
+  productId       String
+  quantity        Int
+  rentFrom        DateTime
+  rentTo          DateTime
+  cart            Cart      @relation(fields: [cartId], references: [id])
+  cartId          String
+  
+  @@map("product_in_cart")
+}
+
+enum Gender {
+  LAKI
+  PEREMPUAN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  RETURNED
+  CANCELLED
+}
+
+enum TransactionStatus {
+  UNPAID
+  AWATING_CONFIRMATION
+  APPROVED
+  REJECTED
+}
+
+enum ShippingMethod {
+  PICKUP
+  GOSEND
+}
+
+enum PaymentMethod {
+  TRANSFER
+  COD
+}
